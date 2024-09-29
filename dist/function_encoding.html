@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function Encoding</title>
+
+    <link href="https://unpkg.com/tabulator-tables@5.3.4/dist/css/tabulator_simple.min.css" rel="stylesheet">
+    <style>
+    body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        background-color: #F9F7F7;
+        height: 100vh;
+        overflow-y: auto; 
+        overflow-x: hidden; 
+    }
+
+    .sidebar {
+        width: 250px;
+        background-color: #112D4E;
+        padding: 20px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        color: white;
+        flex-shrink: 0;
+        border-radius: 0px; 
+        height: 100%;
+        overflow-y: auto; 
+        font-family: 'Inter', sans-serif;
+    }
+
+    .input-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        font-family: 'Inter', sans-serif;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 10px;
+        box-sizing: border-box;
+        background-color: #DBE2EF;
+        color: #112D4E;
+        font-size: 16px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    input[type="checkbox"] {
+        margin-right: 10px;
+        transform: scale(1.2);
+        font-family: 'Inter', sans-serif;
+    }
+
+    button {
+        width: calc(100% - 20px);
+        padding: 12px;
+        background-color: #3F72AF;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-family: 'Inter', sans-serif;
+    }
+
+    button:hover {
+        background-color: #112D4E;
+    }
+
+    .main-content {
+        padding: 20px;
+        background-color: #F9F7F7;
+        margin-left: 10px;
+        border-radius: 10px;
+        overflow-y: auto; /* Allow vertical scrolling for the main content */
+        overflow-x: hidden; /* Prevent horizontal scrolling in the main content */
+    }
+
+    h1 {
+        color: #112D4E;
+        margin-bottom: 20px; /* Consistent 20px margin */
+        font-family: 'Inter', sans-serif;
+    }
+
+    #circuit_title,
+    #state_title {
+        margin-top: 20px; /* 20px space between titles and preceding elements */
+        margin-bottom: 20px; /* 20px space between titles and next section */
+        font-family: 'Inter', sans-serif;
+    }
+
+    #circuit {
+        width: auto;
+        margin-bottom: 20px; /* Ensure 20px space below the circuit div */
+        overflow-x: auto; /* Enables horizontal scrolling for circuit */
+        background-color: #DBE2EF;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        white-space: nowrap; /* Prevents wrapping within the circuit container */
+        font-family: 'Inter', sans-serif;
+    }
+
+    #table {
+        margin-top: 20px; /* 20px between the state name and the state div */
+        max-width: 100%; /* Prevents the table from exceeding its container */
+        background-color: #DBE2EF;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        overflow-x: auto; /* Allows horizontal scrolling for the table */
+        font-family: 'Inter', sans-serif;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #DBE2EF;
+        font-family: 'Inter', sans-serif;
+    }
+
+    thead {
+        background-color: #3F72AF;
+        color: white;
+        font-family: 'Inter', sans-serif;
+    }
+
+    tbody tr:nth-of-type(even) {
+        background-color: #F9F7F7;
+    }
+
+    tbody tr:hover {
+        background-color: #DBE2EF;
+    }
+
+</style>
+
+
+<script defer src="vendors-node_modules_microsoft_quantum-viz_js_dist_qviz_min_js-node_modules_d3_src_index_js-n-46cfdf.bundle.js"></script><script defer src="vendors-node_modules_nerdamer_nerdamer_core_js.bundle.js"></script><script defer src="src_lib_simulator_circuit_js.bundle.js"></script><script defer src="function_encoding.bundle.js"></script></head>
+<body>
+    <div class="sidebar">
+        <h2>Options</h2>
+
+        <div class="input-group">
+            <label for="input_qubits">Input qubits: </label>
+            <input type="number" id="input_qubits" value="2">
+        </div>
+
+        <div class="input-group">
+            <label for="output_qubits">Output qubits: </label>
+            <input type="number" id="output_qubits" value="4">
+        </div>
+
+        <div class="input-group">
+            <label for="variable_type">Variable Type:</label>
+            <select id="variable_type">
+                <option value="integer" selected>Integer Variables</option>
+                <option value="binary">Binary Variables</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="poly">Polynomial: </label>
+            <input type="text" id="poly" value="x^2">
+        </div>
+
+        <div class="input-group">
+            <label>
+                Show Negative Values?
+                <input type="checkbox" id="show_negative">
+            </label>
+        </div>
+
+        <button id="apply">Apply</button>
+    </div>
+
+    <div class="main-content">
+        <h1>Function Encoding</h1>
+        <div id="table_title"></div>
+        <div id="table"></div>
+        <div id="circuit_title"></div>
+        <div id="circuit"></div>
+    </div>
+
+    <script src="dist/bundle.js"></script>
+
+</body>
+</html>
