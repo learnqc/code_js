@@ -25,7 +25,7 @@ function create_circuit(qubits) {
 
 function apply_gate(qc, target, gate, angle = null, report = true) {
     gate = gate.toLowerCase();
-    const argGates = ['rx', 'ry', 'rz'];  
+    const argGates = ['rx', 'ry', 'rz', 'p'];  
 
     if (argGates.includes(gate)) {
         if (angle === null) {

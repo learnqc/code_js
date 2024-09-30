@@ -32,6 +32,25 @@
         font-family: 'Inter', sans-serif;
     }
 
+    /* Add flexbox to align logo and text horizontally */
+    .logo-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px; /* Add space after logo section */
+    }
+
+    .logo-container img {
+        width: 50px; /* Set width for the logo */
+        margin-right: 10px; /* Space between logo and text */
+    }
+
+    .logo-container a {
+        color: white;
+        text-decoration: none; /* Remove underline from the link */
+        font-size: 14px; /* Set font size small enough to fit */
+        font-weight: bold;
+    }
+
     .input-group {
         margin-bottom: 20px;
     }
@@ -152,6 +171,12 @@
 </head>
 <body>
     <div class="sidebar">
+        <!-- Logo with text next to it -->
+        <div class="logo-container">
+            <img src="logo.png" alt="Quantum Logo">
+            <a href="index.html">Building Quantum Software</a>
+        </div>
+
         <h2>Options</h2>
         <div class="input-group">
             <label for="num_qubits">Number of Qubits:</label>

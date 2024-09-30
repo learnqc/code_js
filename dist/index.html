@@ -8,13 +8,38 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #F9F7F7;
+            padding: 0px;
+        }
+        .top-bar {
+            width: 100%;
+            background-color: #3F72AF;
+            color: white;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* Align items to the left */
+        }
+        .top-bar img {
+            height: 50px;
+        }
+        .top-bar a {
+            color: white;
+            text-decoration: none; /* Remove underline from the title */
+        }
+        .top-bar a:hover {
+            text-decoration: underline; /* Optional: Add underline on hover */
+        }
+        .top-bar h1 {
+            margin: 0 0 0 20px; /* Add margin to the left of the title */
+            font-size: 24px;
+            color: white; /* White color for the text */
+        }
+        .app-container {
             text-align: center;
-            padding: 50px;
+            margin-top: 50px;
         }
-        h1 {
-            color: #112D4E;
-        }
-        a {
+        a.app-link {
             display: block;
             margin: 20px auto;
             padding: 15px;
@@ -25,15 +50,26 @@
             border-radius: 10px;
             font-size: 18px;
         }
-        a:hover {
+        a.app-link:hover {
             background-color: #112D4E;
         }
     </style>    
 </head>
 <body>
-    <h1>Select an App</h1>
-    <a href="function_encoding.html">Function Encoding</a>
-    <a href="frequency_encoding.html">Frequency Encoding</a>
-    <a href="quantum_circuit.html">Quantum Circuit</a> 
+    <div class="top-bar">
+        <a href="https://learnqc.com">
+            <img src="logo.png" alt="Quantum Logo">
+        </a>
+        <a href="https://learnqc.com">
+            <h1>Building Quantum Software</h1>
+        </a>
+    </div>
+
+    <div class="app-container">
+        <h1>Select an App</h1>
+        <a href="quantum_circuit.html" class="app-link">Quantum Circuit</a> 
+        <a href="frequency_encoding.html" class="app-link">Frequency Encoding</a>
+        <a href="function_encoding.html" class="app-link">Function Encoding</a>
+    </div>
 </body>
 </html>

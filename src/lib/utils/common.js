@@ -1,7 +1,6 @@
 import * as math from 'mathjs';
 import * as d3 from 'd3';
 import * as qviz from '@microsoft/quantum-viz.js';
-import { TabulatorFull as Tabulator } from 'tabulator-tables';
 
 function is_close_float(a, b, rtol = 1e-5, atol = 1e-8) {
     return Math.abs(a - b) < atol + rtol * Math.abs(b);
@@ -85,8 +84,8 @@ async function state_table_to_html(state, id, decimals = 4, symbol = '█') {
 
         let amplitudeBar = '';
         if (probability > 0) {
-            const normalizedBarLength = Math.round((probability / maxProbability) * 50); // Reduced to 50 max
-            amplitudeBar = `<span style="color: rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]}); max-width: 50px; display: inline-block; overflow: hidden; text-align: left;">${symbol.repeat(Math.max(1, normalizedBarLength))}</span>`;
+            const normalizedBarLength = Math.round((probability) * 50);
+            amplitudeBar = `<span style="color: rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]}); width: 100px; display: inline-block; overflow: hidden; text-align: left; font-size: 10px;">${symbol.repeat(Math.max(1, normalizedBarLength))}</span>`;
         }
 
         return {

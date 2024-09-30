@@ -18,7 +18,6 @@ function prepare_state(...a) {
 }
 
 function init_state(n) {
-    console.log(`Initializing state with ${n} qubits.`);
     const state = Array(math.pow(2, n)).fill(0);
     state[0] = 1;
     return state;
