@@ -84,9 +84,9 @@ async function state_table_to_html(state, id, decimals = 4, symbol = '█') {
 
         let amplitudeBar = '';
         if (probability > 0) {
-            const normalizedBarLength = Math.round((probability)*10) + 1;
+            const normalizedBarLength = Math.round((probability)*20) + 1;
             console.log(normalizedBarLength);
-            amplitudeBar = `<span style="color: rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]}); width: 100px; display: inline-block; overflow: hidden; text-align: left; font-size: 10px;">${symbol.repeat(Math.max(1, normalizedBarLength))}</span>`;
+            amplitudeBar = `<span style="color: rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]}); width: 200px; display: inline-block; overflow: hidden; text-align: left; font-size: 10px;">${symbol.repeat(Math.max(1, normalizedBarLength))}</span>`;
         }
 
         return {
