@@ -10,13 +10,10 @@ function encodeTerm(coeff, vars, circuit, key, value) {
     // Loop through value qubits
     for (let i = 0; i < value.size; i++) {
         if (vars.length > 1) {
-            // Apply multi-controlled phase gate (mcp)
             circuit.mcp(Math.PI * 2 ** -i * coeff, vars.map(j => key.get(j)), value.get(i));
         } else if (vars.length > 0) {
-            // Apply controlled phase gate (cp)
             circuit.cp(Math.PI * 2 ** -i * coeff, key.get(vars[0]), value.get(i));
         } else {
-            // Apply phase gate (p)
             circuit.p(Math.PI * 2 ** -i * coeff, value.get(i));
         }
     }

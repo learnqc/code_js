@@ -21,13 +21,15 @@ async function update_visualization() {
     const target = parseInt(document.getElementById('target').value);
     const gate = document.getElementById('gate').value;
     const angle = document.getElementById('angle').value;
+    const controlsInput = document.getElementById('controls').value;
+    const controls = controlsInput ? controlsInput.split(',').map(c => parseInt(c.trim())) : [];
 
     if (!qc) {
         console.error('Quantum circuit (qc) is not defined.');
         return;
     }
 
-    apply_gate(qc, target, gate, angle);
+    apply_gate(qc, target, gate, angle, controls);
 
     document.getElementById('circuit_title').innerHTML = '<u>Circuit</u>';
     draw_circuit(circuit_to_string(qc), document.getElementById('circuit'));
@@ -40,7 +42,7 @@ async function update_visualization() {
 async function update_qc() {
     const num_qubits = parseInt(document.getElementById('num_qubits').value);
 
-    qc = create_circuit(num_qubits);  
+    qc = create_circuit(num_qubits);
 
     update_target_options(num_qubits); // Update the target dropdown options
 

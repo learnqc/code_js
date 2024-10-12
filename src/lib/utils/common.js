@@ -82,7 +82,7 @@ async function state_table_to_html(state, id, decimals = 4, symbol = '█') {
         const rgb = await complex_to_rgb(c, true);
         const probability = math.pow(math.abs(c), 2).toFixed(decimals);
 
-        let amplitudeBar = '';
+        let amplitudeBar = '' ;
         if (probability > 0) {
             const normalizedBarLength = Math.round((probability)*20) + 1;
             console.log(normalizedBarLength);
