@@ -9,18 +9,33 @@ const gates = no_arg_gates.concat(arg_gates, control_gates, control_arg_gates, m
 
 function add_gate(qc, cs, target, gate, angle = null) {
     if (no_arg_gates.includes(gate)) {
+        if (cs.length !== 0) {
+            throw new Error(`Gate ${gate} should not have control qubits.`);
+        }
         qc[gate](parseInt(target));
     }
     else if (arg_gates.includes(gate) && angle !== null) {
+        if (cs.length !== 0) {
+            throw new Error(`Gate ${gate} should not have control qubits.`);
+        }
         qc[gate](angle, parseInt(target));
     }
     else if (control_gates.includes(gate)) {
+        if (cs.length !== 1) {
+            throw new Error(`Gate ${gate} requires exactly 1 control qubit.`);
+        }
         qc[gate](parseInt(cs[0]), parseInt(target));
     }
     else if (control_arg_gates.includes(gate) && angle !== null) {
+        if (cs.length !== 1) {
+            throw new Error(`Gate ${gate} requires exactly 1 control qubit.`);
+        }
         qc[gate](angle, parseInt(cs[0]), parseInt(target));
     }
     else if (multi_control_gates.includes(gate)) {
+        if (cs.length < 2) {
+            throw new Error(`Gate ${gate} requires at least 2 control qubits.`);
+        }
         qc[gate](angle, cs.map(c => parseInt(c)), parseInt(target));
     }
     else {

@@ -1,4 +1,4 @@
-import { add_gate, create_circuit, apply_gate, last_step, get_state, no_arg_gates } from '../lib/algos/quantum_circuit.js';
+import { add_gate, create_circuit, apply_gate, last_step, get_state, no_arg_gates, control_gates, arg_gates } from '../lib/algos/quantum_circuit.js';
 import { QuantumRegister, QuantumCircuit } from '../lib/simulator/circuit.js';
 import { circuit_to_string, draw_circuit, state_table_to_tabulator, state_table_to_html } from '../lib/utils/common.js';
 
@@ -56,9 +56,15 @@ async function update_qc() {
 function update_angle() {
     const gate = document.getElementById('gate').value;
     const angle = document.getElementById('angle');
+    const controlsInput = document.getElementById('controls');
 
-    // Disable the angle input if the gate is a no-argument gate
-    if (no_arg_gates.includes(gate)) {
+    if (arg_gates.includes(gate) || no_arg_gates.includes(gate)) {
+        controlsInput.disabled = true;
+    } else {
+        controlsInput.disabled = false;
+    }
+
+    if (no_arg_gates.includes(gate) || control_gates.includes(gate)) {
         angle.disabled = true;
         angle.value = ''; // Clear the angle value
     } else {
