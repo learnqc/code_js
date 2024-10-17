@@ -22,7 +22,7 @@ async function update_visualization() {
     const gate = document.getElementById('gate').value;
     const angle = document.getElementById('angle').value;
     const controlsInput = document.getElementById('controls').value;
-    const controls = controlsInput ? controlsInput.split(',').map(c => parseInt(c.trim())) : [];
+    const controls = controlsInput ? controlsInput.split(' ').map(c => parseInt(c.trim())) : [];
 
     if (!qc) {
         console.error('Quantum circuit (qc) is not defined.');
