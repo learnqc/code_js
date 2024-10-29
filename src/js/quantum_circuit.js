@@ -7,13 +7,20 @@ let qc;
 
 function update_target_options(num_qubits) {
     const target = document.getElementById('target');
+    const controls = document.getElementById('controls');
     target.innerHTML = ''; // Clear existing options
+    controls.innerHTML = ''; // Clear existing options for controls
 
     for (let i = 0; i < num_qubits; i++) {
         const option = document.createElement('option');
         option.value = i;
         option.text = `${i}`;
         target.appendChild(option);
+
+        const controlOption = document.createElement('option');
+        controlOption.value = i;
+        controlOption.text = `${i}`;
+        controls.appendChild(controlOption);
     }
 }
 
@@ -21,8 +28,10 @@ async function update_visualization() {
     const target = parseInt(document.getElementById('target').value);
     const gate = document.getElementById('gate').value;
     const angle = document.getElementById('angle').value;
-    const controlsInput = document.getElementById('controls').value;
-    const controls = controlsInput ? controlsInput.split(' ').map(c => parseInt(c.trim())) : [];
+    
+    // Retrieve selected control qubits from the multi-select list
+    const controlsSelect = document.getElementById('controls');
+    const controls = Array.from(controlsSelect.selectedOptions).map(option => parseInt(option.value));
 
     if (!qc) {
         console.error('Quantum circuit (qc) is not defined.');
