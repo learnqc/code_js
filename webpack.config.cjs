@@ -8,6 +8,7 @@ module.exports = {
         function_encoding: './src/js/function_encoding.js', // Full name
         frequency_encoding: './src/js/frequency_encoding.js', // Full name
         quantum_circuit: './src/js/quantum_circuit.js', // Full name
+        chapter03: './src/js/chapter03.js'
     },
     output: {
         filename: '[name].bundle.js',
@@ -29,6 +30,11 @@ module.exports = {
             template: './public/quantum_circuit.html', // Full name
             filename: 'quantum_circuit.html', // Full name
             chunks: ['quantum_circuit'], // Full name
+        }),
+        new HtmlWebpackPlugin({
+            template: './public/chapter03.html', // Path to the new HTML template
+            filename: 'chapter03.html', // Output filename
+            chunks: ['chapter03'], // Associate it with the chapter03 entry point
         }),
         new HtmlWebpackPlugin({
             template: './public/index.html',
