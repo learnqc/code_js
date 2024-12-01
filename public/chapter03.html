@@ -1,14 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Building Quantum Software: Chapter 3</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 3</title>
+  <script src="https://cdn.jsdelivr.net/npm/mathjs@11.0.0/lib/browser/math.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.37.0/min/vs/editor/editor.main.css">
+  <style>
+    .editor-container {
+      width: 1000px;
+      height: 75px;
+      margin-bottom: 10px;
+    }
+    .run-button {
+      margin-top: 5px;
+      padding: 5px 10px;
+    }
+    .output {
+      margin-top: 5px;
+      font-family: monospace;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      height: 25px;
+      overflow-y: scroll;
+      width: 1000px;
+    }
+    .step-container {
+      margin-bottom: 20px;
+    }
+    .step-title {
+      font-size: 16px;
+    }
+    .text-div {
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Building Quantum Software: Chapter 3</h1>
-    <div id="tutorial"></div>
+  <div id="tutorial"></div>
 
-    <script src="dist/bundle.js"></script>
+  <div id="editorContainer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.37.0/min/vs/loader.js"></script>
+  <script src="dist/bundle.js"></script>
 </body>
 </html>
