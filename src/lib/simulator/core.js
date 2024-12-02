@@ -18,8 +18,10 @@ function prepare_state(...a) {
 }
 
 function init_state(n) {
-    const state = Array(math.pow(2, n)).fill(0);
-    state[0] = 1;
+    const state = Array(Math.pow(2, n)).fill(null).map(() => math.complex(0, 0));
+
+    state[0] = math.complex(1, 0);
+
     return state;
 }
 
@@ -64,7 +66,7 @@ function* pair_generator_pattern(n, t) {
 const pair_generator = pair_generator_concatenate;
 
 
-function process_pair(state, gate, k0, k1) {
+function process_pair(state, gate, k0=0, k1=1) {
     const x = state[k0];
     const y = state[k1];
     state[k0] = math.add(math.multiply(x, gate[0][0]), math.multiply(y, gate[0][1]));

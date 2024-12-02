@@ -3,40 +3,115 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 3</title>
+  <title>Building Quantum Software: Chapter 3</title>
   <script src="https://cdn.jsdelivr.net/npm/mathjs@11.0.0/lib/browser/math.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.37.0/min/vs/editor/editor.main.css">
   <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      background-color: #F9F9F9; /* Light background color */
+      height: 100vh;
+      overflow-y: auto; /* Enable vertical scrolling for the page */
+      overflow-x: hidden; /* Disable horizontal scrolling for the body */
+      color: #000; /* Black text color */
+    }
+  
+    .main-container {
+      flex-grow: 1;
+      padding: 20px;
+      background-color: #FFFFFF; /* White background for content area */
+      margin-left: 250px; /* Space for potential sidebar */
+      margin-right: 20px; /* Added margin to shift content to the right */
+      border-radius: 10px;
+      overflow-y: auto; /* Allow vertical scrolling for the main content */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  
     .editor-container {
-      width: 1000px;
-      height: 75px;
+      width: 100%;
+      height: 200px;
       margin-bottom: 10px;
+      border-radius: 10px;
+      background-color: #FFFFFF; /* White background for the editor */
+      color: #000; /* Black text color in the editor */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
+  
     .run-button {
-      margin-top: 5px;
-      padding: 5px 10px;
-    }
-    .output {
-      margin-top: 5px;
-      font-family: monospace;
-      background-color: #f0f0f0;
-      padding: 10px;
-      border: 1px solid #ccc;
-      height: 25px;
-      overflow-y: scroll;
-      width: 1000px;
-    }
-    .step-container {
-      margin-bottom: 20px;
-    }
-    .step-title {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #3F72AF; /* Light blue button */
+      border: none;
+      border-radius: 10px;
+      color: white;
       font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
     }
-    .text-div {
+  
+    .run-button:hover {
+      background-color: #112D4E; /* Darker blue on hover */
+    }
+  
+    .output {
+      margin-top: 10px;
+      font-family: monospace;
+      background-color: #F0F0F0; /* Light gray background for output */
+      color: #000; /* Black text color in output */
+      padding: 10px;
+      border: 1px solid #DDD; /* Light border */
+      border-radius: 10px;
+      height: 100px;
+      width: 100%;
+      overflow-y: scroll;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+  
+    .step-container {
+      margin-bottom: 30px;
+    }
+  
+    .step-title {
+      font-size: 18px;
+      color: #000; /* Black color for step titles */
       margin-bottom: 10px;
+    }
+  
+    .subheading {
+      font-size: 22px;
+      color: #000; /* Black color for subheadings */
+      margin-bottom: 10px;
+    }
+  
+    .text-div {
+      margin-bottom: 15px;
+    }
+  
+    /* Improved styling for page headings */
+    h1 {
+      font-size: 36px;
+      color: #000; /* Black color for headings */
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+  
+    .text-div p {
+      font-size: 18px;
+      color: #000; /* Black color for paragraphs */
+      line-height: 1.6;
+    }
+  
+    .step-title, .subheading {
+      font-family: 'Inter', sans-serif;
     }
   </style>
-<script defer src="vendors-node_modules_microsoft_quantum-viz_js_dist_qviz_min_js-node_modules_d3_src_index_js-n-46cfdf.bundle.js"></script><script defer src="chapter03.bundle.js"></script></head>
+  
+  
+  
+<script defer src="vendors-node_modules_microsoft_quantum-viz_js_dist_qviz_min_js-node_modules_d3_src_index_js-n-46cfdf.bundle.js"></script><script defer src="src_lib_simulator_core_js-src_lib_simulator_gates_js.bundle.js"></script><script defer src="chapter03.bundle.js"></script></head>
 <body>
   <div id="tutorial"></div>
 

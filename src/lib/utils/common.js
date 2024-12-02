@@ -27,6 +27,10 @@ function all_close(state1, state2) {
     return true;
 }
 
+function cis(theta) {
+    return math.complex(math.cos(theta), math.sin(theta));
+}
+
 let colormapCache = null;
 async function loadColormap() {
     if (!colormapCache) {
@@ -277,6 +281,65 @@ function draw_circuit(circuit_string, circuit_div) {
     }
 }
 
+function format_value(value, decimals) {
+    const valueString = value.toString();
+    const currentDecimals = valueString.includes('.') ? valueString.split('.')[1].length : 0;
+
+    const roundedDecimals = Math.min(currentDecimals, decimals);
+    return value.toFixed(roundedDecimals);
+}
+
+function to_table(state, decimals = 5) {
+    const table = [];
+    for (let k = 0; k < state.length; k++) {
+        const row = []; 
+        const value = state[k];
+        row.push(k);
+        row.push(value.toString()); 
+        const direction = Math.atan2(value.im, value.re) / (2 * Math.PI) * 360;
+        row.push(format_value(direction, decimals)); 
+        const magnitude = Math.sqrt(value.re ** 2 + value.im ** 2);
+        row.push(format_value(magnitude, decimals));
+        const probability = magnitude ** 2;
+        row.push(format_value(probability, decimals)); 
+        table.push(row); 
+    }
+    return table;
+}
+
+function print_state(state, decimals = 5) {
+    const table = to_table(state, decimals);
+    let out = "\n";
+    table.forEach(row => {
+        out += (`[${row.join(', ')}]\n`);
+    });
+    return out;
+}
+
+function squaredMagnitude(c) {
+    return c.real * c.real + c.imag * c.imag;
+}
+
+function choices(choicesArr, weights, k) {
+    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+    const results = [];
+
+    for (let i = 0; i < k; i++) {
+        let rand = Math.random() * totalWeight;
+        let cumulativeWeight = 0;
+
+        for (let j = 0; j < choicesArr.length; j++) {
+            cumulativeWeight += weights[j];
+            if (rand < cumulativeWeight) {
+                results.push(choicesArr[j]);
+                break;
+            }
+        }
+    }
+
+    return results;
+}
+
 export {
     is_close_float,
     is_close,
@@ -285,5 +348,9 @@ export {
     circuit_to_string,
     draw_circuit,
     grid_state_to_html,
-    state_table_to_html
+    state_table_to_html,
+    cis,
+    print_state,
+    choices,
+    squaredMagnitude
 };
