@@ -1,3 +1,4 @@
+
 # humejs
 
 humejs is a JavaScript-based application for encoding and visualizing quantum circuits. The project includes various modules for function encoding, frequency encoding, and quantum circuit visualization, using a variety of libraries and tools for computation and rendering.
@@ -21,20 +22,38 @@ humejs is a JavaScript-based application for encoding and visualizing quantum ci
 ## Project Structure
 ```
 humejs/
-├── dist/               # Build output
-├── public/             # Static HTML files
-│   ├── function_encoding.html
+├── dist/                     # Build output
+│   └── index.html            # Main entry point to run the program
+├── public/                   # Static HTML files
+│   ├── chapter04.html
 │   ├── frequency_encoding.html
+│   ├── function_encoding.html
+│   ├── index.html
 │   └── quantum_circuit.html
 ├── src/
 │   ├── js/
-│   │   ├── function_encoding.js   # Handles function encoding logic
-│   │   ├── frequency_encoding.js  # Handles frequency encoding logic
-│   │   └── quantum_circuit.js     # Quantum circuit simulation logic
+│   │   ├── chapter03.js
+│   │   ├── chapter04.js
+│   │   ├── frequency_encoding.js
+│   │   ├── function_encoding.js
+│   │   └── quantum_circuit.js
 │   └── lib/
+│       ├── algos/
+│       │   ├── frequency_encoding.js
+│       │   ├── function_encoding.js
+│       │   └── quantum_circuit.js
+│       ├── simulator/
+│       │   ├── circuit.js
+│       │   ├── core.js
+│       │   └── gates.js
 │       └── utils/
-│           └── colormap.json      # Color map for visualizations
-└── webpack.config.js   # Webpack configuration file
+│           ├── colormap.json
+│           ├── common.js
+│           └── matrix.js
+├── webpack.config.cjs        # Webpack configuration file
+├── package.json              # Project dependencies
+├── package-lock.json         # Lockfile for npm
+└── README.md                 # Project documentation
 ```
 
 ## Installation
@@ -60,28 +79,22 @@ humejs/
     ```
     This will bundle the JavaScript files and output them to the `dist/` folder.
    
-2. **Development Mode**:
-    ```bash
-    npm run build
-    ```
-    This will keep Webpack running in watch mode, rebuilding on file changes.
+2. **Run the program**:
+   Open the `index.html` file located in the `dist/` folder in your web browser.
 
-3. **Run the Application**:
-    Use a local server to serve files from the `dist/` folder. You can use a tool like `live-server` or `http-server`:
-    ```bash
-    npm install -g live-server
-    live-server dist/
-    ```
+3. **Compile changes**:
+   Changes automatically compiled with `webpack --watch`
 
 4. **Deploy to GitHub Pages**:
     ```bash
     npm run deploy
     ```
-    This will deploy the `dist/` folder to GitHub Pages.
+    This will deploy the `dist/` folder to the `gh-pages` branch on GitHub.
 
 ## Webpack Configuration
 
 - Entry Points:
+    - `chapter03.js`, `chapter04.js`: Logic for individual chapters.
     - `function_encoding.js`: Function encoding logic.
     - `frequency_encoding.js`: Frequency encoding logic.
     - `quantum_circuit.js`: Quantum circuit logic.
