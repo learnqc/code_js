@@ -38,7 +38,8 @@ async function update_visualization() {
         return;
     }
 
-    apply_gate(qc, target, gate, angle, controls);
+    apply_gate(qc, 2, 'MCX', null, [0, 1]);
+    // apply_gate(qc, target, gate, angle, controls);
 
     document.getElementById('circuit_title').innerHTML = '<u>Circuit</u>';
     draw_circuit(circuit_to_string(qc), document.getElementById('circuit'));

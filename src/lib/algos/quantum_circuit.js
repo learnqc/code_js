@@ -8,6 +8,7 @@ const multi_control_gates = ['mcx', 'mcp'];
 const gates = no_arg_gates.concat(arg_gates, control_gates, control_arg_gates, multi_control_gates);
 
 function add_gate(qc, cs, target, gate, angle = null) {
+    console.log(cs);
     if (no_arg_gates.includes(gate)) {
         if (cs.length !== 0) {
             throw new Error(`Gate ${gate} should not have control qubits.`);
@@ -36,7 +37,11 @@ function add_gate(qc, cs, target, gate, angle = null) {
         if (cs.length < 2) {
             throw new Error(`Gate ${gate} requires at least 2 control qubits.`);
         }
-        qc[gate](angle, cs.map(c => parseInt(c)), parseInt(target));
+        if(gate == "mcx") {
+            qc.mcx(cs, target);
+        } else {
+            qc[gate](angle, cs.map(c => parseInt(c)), parseInt(target));
+        }
     }
     else {
         console.error(`Invalid gate or missing parameters for gate: ${gate}`);
@@ -50,6 +55,7 @@ function create_circuit(qubits) {
 }
 
 function apply_gate(qc, target, gate, angle = null, controls = [], report = true) {
+    console.log(controls);
     gate = gate.toLowerCase();
     const argGates = ['rx', 'ry', 'rz', 'p', 'cp', 'cry', 'mcp'];  
 
@@ -69,6 +75,8 @@ function apply_gate(qc, target, gate, angle = null, controls = [], report = true
         const len = Object.keys(qc.reports).length;
         qc.report(`Step ${len + 1}`);
     }
+
+    
 
 }
 

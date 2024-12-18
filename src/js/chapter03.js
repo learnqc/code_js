@@ -22,45 +22,53 @@ let sharedContext = {
   
   require(['vs/editor/editor.main'], function() {
   
-    let codeHistory = [];  
-  
+    let codeHistory = [];
+
     function displayStepAndEditor(title, code) {
-      const tutorialDiv = document.getElementById("tutorial");
-  
-      const stepDiv = document.createElement("div");
-      stepDiv.className = "step-container";
-  
-      const titleEl = document.createElement("p");
-      titleEl.className = "step-title";
-      titleEl.textContent = title;
-  
-      const editorContainer = document.createElement('div');
-      editorContainer.className = 'editor-container';
-      const outputContainer = document.createElement('div');
-      outputContainer.className = 'output';
-  
-      const runButton = document.createElement('button');
-      runButton.className = 'run-button';
-      runButton.innerText = 'Run Code';
-  
-      stepDiv.appendChild(titleEl);
-      stepDiv.appendChild(editorContainer);
-      stepDiv.appendChild(outputContainer);
-      stepDiv.appendChild(runButton);
-  
-      tutorialDiv.appendChild(stepDiv);
-  
-      const editor = monaco.editor.create(editorContainer, {
-        value: code,
-        language: 'javascript',
-        theme: "vs-light"
-      });
-  
-      // Run the code when the button is clicked
-      runButton.onclick = function() {
-        runCode(editor, outputContainer);
-      };
-    }
+  const tutorialDiv = document.getElementById("tutorial");
+
+  // Step container
+  const stepDiv = document.createElement("div");
+  stepDiv.className = "step-container";
+
+  // Title
+  const titleEl = document.createElement("p");
+  titleEl.className = "step-title";
+  titleEl.textContent = title;
+
+  // Editor container
+  const editorContainer = document.createElement("div");
+  editorContainer.className = "editor-container";
+
+  // Run Button
+  const runButton = document.createElement("button");
+  runButton.className = "run-button";
+  runButton.innerText = "Run Code";
+
+  // Output container
+  const outputContainer = document.createElement("div");
+  outputContainer.className = "output";
+
+  // Append elements
+  editorContainer.appendChild(runButton);
+  stepDiv.appendChild(titleEl);
+  stepDiv.appendChild(editorContainer);
+  stepDiv.appendChild(outputContainer);
+  tutorialDiv.appendChild(stepDiv);
+
+  // Monaco Editor setup
+  const editor = monaco.editor.create(editorContainer, {
+    value: code,
+    language: "javascript",
+    theme: "vs-light",
+    automaticLayout: true // Dynamically adjust to container size
+  });
+
+  // Run Code Button Logic
+  runButton.onclick = function () {
+    runCode(editor, outputContainer);
+  };
+}
   
     function runCode(editor, outputContainer) {
         const code = editor.getValue();
@@ -894,27 +902,6 @@ output;
     let table21 = document.createElement("div");
     table21.id = "state_table_21";
     document.getElementById("tutorial").appendChild(table21);
-    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-  
   });
   

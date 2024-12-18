@@ -102,12 +102,23 @@ function mc_transform(state, cs, t, gate) {
 }
 
 function measure(state, shots) {
-    const probabilities = state.map(c => math.pow(math.abs(c), 2));
-    const samples = Array(shots).fill(0).map(() => math.random(probabilities.length));
+    const probabilities = state.map(c => Math.pow(math.abs(c), 2)); // Calculate probabilities
     const counts = {};
-    samples.forEach(s => {
-        counts[s] = (counts[s] || 0) + 1;
-    });
+
+    for (let i = 0; i < shots; i++) {
+        const r = Math.random(); // Random value between 0 and 1
+        let cumulative = 0;
+
+        // Determine the outcome based on cumulative probabilities
+        for (let k = 0; k < probabilities.length; k++) {
+            cumulative += probabilities[k];
+            if (r <= cumulative) {
+                counts[k] = (counts[k] || 0) + 1; // Increment the count for outcome k
+                break;
+            }
+        }
+    }
+
     return counts;
 }
 

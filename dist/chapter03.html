@@ -7,110 +7,116 @@
   <script src="https://cdn.jsdelivr.net/npm/mathjs@11.0.0/lib/browser/math.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.37.0/min/vs/editor/editor.main.css">
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      background-color: #F9F9F9; /* Light background color */
-      height: 100vh;
-      overflow-y: auto; /* Enable vertical scrolling for the page */
-      overflow-x: hidden; /* Disable horizontal scrolling for the body */
-      color: #000; /* Black text color */
-    }
-  
-    .main-container {
-      flex-grow: 1;
-      padding: 20px;
-      background-color: #FFFFFF; /* White background for content area */
-      margin-left: 250px; /* Space for potential sidebar */
-      margin-right: 20px; /* Added margin to shift content to the right */
-      border-radius: 10px;
-      overflow-y: auto; /* Allow vertical scrolling for the main content */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-  
-    .editor-container {
-      width: 100%;
-      height: 200px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      background-color: #FFFFFF; /* White background for the editor */
-      color: #000; /* Black text color in the editor */
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-  
-    .run-button {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background-color: #3F72AF; /* Light blue button */
-      border: none;
-      border-radius: 10px;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-  
-    .run-button:hover {
-      background-color: #112D4E; /* Darker blue on hover */
-    }
-  
-    .output {
-      margin-top: 10px;
-      font-family: monospace;
-      background-color: #F0F0F0; /* Light gray background for output */
-      color: #000; /* Black text color in output */
-      padding: 10px;
-      border: 1px solid #DDD; /* Light border */
-      border-radius: 10px;
-      height: 100px;
-      width: 100%;
-      overflow-y: scroll;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-  
-    .step-container {
-      margin-bottom: 30px;
-    }
-  
-    .step-title {
-      font-size: 18px;
-      color: #000; /* Black color for step titles */
-      margin-bottom: 10px;
-    }
-  
-    .subheading {
-      font-size: 22px;
-      color: #000; /* Black color for subheadings */
-      margin-bottom: 10px;
-    }
-  
-    .text-div {
-      margin-bottom: 15px;
-    }
-  
-    /* Improved styling for page headings */
-    h1 {
-      font-size: 36px;
-      color: #000; /* Black color for headings */
-      margin-bottom: 20px;
-      font-weight: bold;
-    }
-  
-    .text-div p {
-      font-size: 18px;
-      color: #000; /* Black color for paragraphs */
-      line-height: 1.6;
-    }
-  
-    .step-title, .subheading {
-      font-family: 'Inter', sans-serif;
-    }
+/* Reset default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background-color: #FDFCFB; /* Soft off-white background */
+  color: #333; /* Dark gray for text */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+}
+
+h1, h2 {
+  font-size: 1.8rem;
+  color: #444; /* Darker muted gray for titles */
+  margin: 20px 0;
+  text-align: center;
+}
+
+.step-container {
+  margin: 20px auto;
+  width: 80%;
+  max-width: 1200px; /* Keeps content from being too wide */
+  background-color: #FFFFFF; /* White container background */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+.subheading {
+  font-size: 1.5rem;
+  color: #555; /* Slightly muted text */
+  margin-bottom: 15px;
+}
+
+.text-div p {
+  font-size: 1rem;
+  color: #555; /* Light text */
+  line-height: 1.6;
+}
+
+/* Code editor container */
+.editor-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 300px; /* Fixed height */
+  margin: 20px auto;
+  width: 100%; /* Fill parent container */
+  background-color: #F8F9FA; /* Light gray background */
+  border: 1px solid #E0E0E0; /* Light border */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Monaco editor fills container */
+.editor-container .monaco-editor {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Run button styling */
+.run-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  padding: 8px 12px;
+  background-color: #6C7A89; /* Soft blue-gray */
+  border: none;
+  border-radius: 5px;
+  color: #FFF; /* White text */
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.run-button:hover {
+  background-color: #4B5B6A; /* Darker hover color */
+}
+
+/* Output box */
+.output {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #F9F9F9; /* Very light gray */
+  border: 1px solid #E0E0E0;
+  border-radius: 5px;
+  color: #444;
+  font-family: monospace;
+  overflow-y: auto;
+  height: 100px; /* Fixed height */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
   </style>
-  
-  
-  
+
+
+
 <script defer src="vendors-node_modules_microsoft_quantum-viz_js_dist_qviz_min_js-node_modules_d3_src_index_js-n-46cfdf.bundle.js"></script><script defer src="src_lib_simulator_core_js-src_lib_simulator_gates_js.bundle.js"></script><script defer src="chapter03.bundle.js"></script></head>
 <body>
   <div id="tutorial"></div>

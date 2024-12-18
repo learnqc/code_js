@@ -155,8 +155,10 @@ class QuantumCircuit {
     }
 
     run() {
+        console.log(this.transformations);
         for (let tr of this.transformations) {
             if (tr.name === 'unitary') {
+                
                 const cs = tr.controls;
                 if (cs.length === 0) {
                     transform_u(this.state, tr.gate, tr.target);
@@ -169,6 +171,8 @@ class QuantumCircuit {
                 c_transform(this.state, tr.i, tr.j, x);
             } else {
                 const cs = tr.controls;
+                console.log("trcontrols:");
+                console.log(tr.controls);
                 if (cs.length === 0) {
                     transform(this.state, tr.target, tr.gate);
                 } else if (cs.length === 1) {
