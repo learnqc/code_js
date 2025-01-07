@@ -32,6 +32,7 @@ function cis(theta) {
 }
 
 let colormapCache = null;
+
 async function loadColormap() {
     if (!colormapCache) {
         const response = await fetch('./colormap.json');

@@ -47,7 +47,7 @@ let sharedContext = {
     QuantumRegister: QuantumRegister,
     QuantumTransformation: QuantumTransformation,
     uniform: uniform,
-    binomial, binomial
+    binomial: binomial
   };
 
 require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.37.0/min/vs' }});
@@ -196,21 +196,6 @@ displayStepAndEditor(
     return math.complex(math.cos(theta), math.sin(theta));
 }`
     )
-
-// Step 1: Define the first quantum state
-displayStepAndEditor(
-  "Define the first quantum state with p = 0.75 and directions θ₀ = 0° and θ₁ = 60°.",
-  `let p = 0.75;
-let theta0 = 0;
-let theta1 = 60 * (Math.PI / 180); // Convert to radians
-
-let first_state = [
-  math.complex(math.sqrt(p) * math.cos(theta0), math.sqrt(p) * math.sin(theta0)),
-  math.complex(math.sqrt(1 - p) * math.cos(theta1), math.sqrt(1 - p) * math.sin(theta1))
-];
-
-first_state.map(amp => amp.toString());`
-);
 
 // Step 1: Define the first quantum state
 displayStepAndEditor(

@@ -15,6 +15,7 @@
   "dependencies": {
     "@microsoft/quantum-viz.js": "^1.0.5",
     "d3": "^7.9.0",
+    "lit": "^3.2.1",
     "mathjs": "^13.2.3",
     "nerdamer": "^1.1.13",
     "tabulator-tables": "^6.2.5"

@@ -10,6 +10,7 @@ module.exports = {
         quantum_circuit: './src/js/quantum_circuit.js', // Full name
         chapter03: './src/js/chapter03.js', // Chapter 3
         chapter04: './src/js/chapter04.js', // Added Chapter 4
+        tutorial: './src/js/tutorial.js'
     },
     output: {
         filename: '[name].bundle.js',
@@ -41,6 +42,11 @@ module.exports = {
             template: './public/chapter04.html', // Added Chapter 4 template
             filename: 'chapter04.html',
             chunks: ['chapter04'],
+        }),
+        new HtmlWebpackPlugin({
+            template: './public/tutorial.html', // Added Chapter 4 template
+            filename: 'tutorial.html',
+            chunks: ['tutorial'],
         }),
         new HtmlWebpackPlugin({
             template: './public/index.html',
