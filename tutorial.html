@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Gate Simulator</title>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjs/lib/browser/math.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      text-align: left;
+      width: 80%;
+      margin-bottom: 20px;
+      margin: 20px auto;
+    }
+
+    .app {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    p {
+      margin: 20px auto;
+      padding: 10px;
+      width: 80%;
+      text-align: left;
+      font-size: 16px;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    h2 {
+        margin: 20px auto;
+    text-align: left;
+    width: 80%;
+      font-size: 1.5rem;
+      color: #333;
+    }
+
+    .image-container {
+      text-align: center; /* Centers the image */
+    }
+
+    .math {
+        text-align: right;
+        width: 90%;
+    }
+
+    img {
+      max-width: 80%; /* Adjust size as needed */
+      max-height: 300px; /* Maintain aspect ratio */
+    }
+
+    div {
+      margin-bottom: 20px;
+    }
+  </style>
+<script defer src="vendors-node_modules_mathjs_lib_esm_entry_pureFunctionsAny_generated_js.bundle.js"></script><script defer src="vendors-node_modules_lit_index_js.bundle.js"></script><script defer src="tutorial.bundle.js"></script></head>
+<body>
+  <h1>You Understand It if You Can Model It</h1>
+  <p>To make quantum computers, you need to know a lot about quantum physics. But to use them, you don't need to know all that. With this introduction, you will be able to model quantum computations by creating a simple quantum simulator with a few lines of code, as detailed in an appendix.</p>
+
+  <h1>Simple Math Gives Best Performance and Understanding</h1>
+<p>When explaining new ideas, it's helpful to start with what people already know. But what common knowledge is useful in learning quantum computing? Many think you need to study high-level linear algebra before understanding quantum computing's strange nature. This isn't true. Basic math (like binary numbers, trigonometry, and probabilities) is enough.</p> 
+
+<p>Quantum computers have two main features that regular computers don't: quantum parallelism and quantum measurement. Classical computers have limited ways of parallel computing (like vector processing and SIMD), which are like quantum parallelism, but only on a small scale. They can also take samples from probability distributions, similar to quantum measurement, but again, they can only do this efficiently on a small scale.</p>
+ <p>It turns out that using simple math not only simplifies understanding but also enhances performance when modeling quantum computations.
+</p>   
+
+<h1>From Classical To Quantum Systems</h1>
+<p>You're used to using numbers to understand systems that matter to you, like the stuff in your fridge, your account balances, or your investment portfolio. In portfolios, percentages have to add up to 100, and you can change your allocations by moving money between investments.</p>
+
+<p>Quantum systems also have attributes with values that are constrained as a total, and you can change them with quantum transformations, which essentially move values between attributes.</p>
+
+<p>The big difference is what happens when we observe (measure) a quantum system's state. The system's state collapses into one with just one attribute, like putting all your investments into one instrument. We only see one attribute at random, with a likelihood that depends on its value. This is the only strange thing about quantum systems, but once you understand it, it is not hard to use it.</p>
+<p>Philosophers of science often engage in discussions about the existence of these values prior to observation. When it comes to designing quantum programs, these values are relevant, as they must be taken into consideration. Therefore, from the perspective of quantum program developers, these values are considered to exist. However, they are not stored anywhere, like we are used to values in classical computing. They are similar to attributes like the speed or the rotations per minute desribing the state of a car.  We know how to change and measure them without directly writing and reading them.</p>
+
+<h1>Quantum Programs, Outcomes and Probabilities</h1>
+
+<p>In a quantum computation, the state of the underlying quantum system is altered, and there are various possible outcomes, each with a particular probability. These potential outcomes are attributes of the quantum system's state.</p>
+<p>When executing a quantum program on a quantum computer, a single outcome is observed upon measuring the state of the quantum system. To obtain valuable information, the same program must be run multiple times, and the results of each run must be collected. A single execution is commonly referred to as a shot, while the number of times an outcome is observed is called a count. </p>
+<p>The behavior of a quantum program, when observed multiple times, is analogous to a Galton board, also known as a bean machine. This device consists of a vertical board with rows of pegs that are alternately positioned. Beads dropped from the top of the board bounce left or right as they encounter the pegs, ultimately landing in bins at the bottom. The resulting distribution of accumulated bead columns in these bins closely resembles a bell curve. By adjusting the arrangement of the pegs, one can generate different probability distributions.</p>
+<div class="image-container">
+    <img src="https://learnqc.com/intro_files/image-20240504153745637.png">
+</div>
+
+<p>By converting the counts into percentages of the total number of runs, a probability histogram can be created, with each outcome being assigned a percentage based on its count, sometimes called a quasi-probability.</p>
+
+<div class="image-container">
+    <img src="https://learnqc.com/intro_files/image-20240505150613520.png">
+</div>
+
+<h1>Quantum Probabilities Are More Complex</h1>
+<p>While we can only count outcomes of a quantum computation and approximate their probabilities, the values comprising a quantum state (one per possible outcome) are not straight probabilities. They are complex numbers, called probability amplitudes, or simply amplitudes. We can think of an amplitude as an arrow, or force, having a magnitude and a direction. The probability of an outcome is actually the squared magnitude of its amplitude. This is one of the fundamental facts of quantum theory that we just accept without trying to explain.</p>
+<p>Depending on the context, it is useful to visualize an amplitude (complex number) in two ways:  </p>
+<p>1. An arrow starting from the origin of the plane and pointing to the corresponding point of the complex number.  </p>
+<p>2. A colored bar with a length equal to the magnitude (absolute value) of the complex number, and a color determined by the phase (direction) of the complex number, as depicted on the color wheel below.  </p>
+
+
+<div class="image-container">
+    <img src="https://learnqc.com/intro_files/image-20240508203401649.png">
+</div>
+
+<p>The amplitudes comprising the state of a qubit system cannot have magnitudes larger than 1, since the squared magnitudes are probabilities.   </p>
+
+<h1>Complex Number Refresher</h1>
+<p>
+  This is the most advanced math needed in this article. Recall that a complex number has an algebraic form:
+</p>
+
+<div class="math">
+  $$ z = a + ib, \quad \tag{1} $$
+</div>
+
+<p>and a polar form</p>
+
+<div class="math">
+  $$ z = r (\cos \theta + i \sin \theta), \quad \tag{2} $$
+</div>
+
+<p>Where \( i \) is the imaginary unit, with the property</p>
+
+<div class="math">
+  $$ i^2 = -1. \quad \tag{3} $$
+</div>
+
+<p>A complex number corresponds to a point in the plane.</p>
+
+<div class="image-container">
+    <img src = "https://learnqc.com/intro_files/image-20240505140540605.png">
+</div>
+
+<p>We can convert from the algebraic to the polar using simple formulas:</p>
+
+<div class="math">
+    $$ r = \sqrt{a^2 + b^2}, \quad \tag{4} $$
+  </div>
+  
+  <div class="math">
+    $$ \theta = \text{atan2}(b, a). \quad \tag{5} $$
+  </div>
+
+  <h1>Quantum State</h1>
+<p>
+  As mentioned, each possible outcome of a quantum computation has a probability amplitude associated to it, and the probability of an outcome is the squared magnitude of its corresponding amplitude. The sum of the probabilities of all possible outcomes adds up to 1.
+</p>
+
+<p>
+  We can use table "comprehensions" (term borrowed from Python's list comprehensions) to visualize quantum states algebraically.
+</p>
+
+<div class="image-container">
+    <img src = "https://learnqc.com/intro_files/image-20240504164915557.png">
+</div>
+
+<p>
+  Such a comprehension table can be seen as a bridge between formal math and code. Python code to express the same state looks like this:
+</p>
+
+<!-- Python Code Block -->
+<pre style="background-color: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; width: 80%; margin: 20px auto;">
+state = [a[k] + 1j * b[k] for k in range(N)]
+</pre>
+
+<p>
+  You don't need to understand the following formula, but this is how a quantum state is typically expressed mathematically:
+</p>
+
+<!-- Formula: Quantum State -->
+<div class="math">
+  $$ \lvert \psi \rangle = \sum_{k=0}^{N} \left( a_k + i b_k \right) \lvert k \rangle, \quad \tag{6} $$
+</div>
+
+<p>
+  In our experience, using tables is very effective in expressing quantum states, for all audiences.
+</p>
+
+<p>
+  We can use the polar form in tables as well:
+</p>
+
+<div class="image-container">
+    <img src ="https://learnqc.com/intro_files/image-20240504165953054.png">
+</div>
+
+<p>
+  It's sometimes useful to include more information in table rows, to get a deeper understanding of a quantum state:
+</p>
+
+
+<div class = "image-container">
+    <img src = "https://learnqc.com/intro_files/image-20240504170122283.png">
+</div>
+
+
+
+<h1>State Tables and Rose Charts</h1>
+<p>
+  Comprehension tables are used to show formulas or expressions in quantum states. For a concrete state, we can use a state table with one row of expanded information for each possible outcome of a quantum computation, or a simpler polar area diagram where the outcomes are represented by circle sectors, and their probabilities are sub-sectors whose area is proportional to the probability.
+</p>
+
+<!-- Placeholder for State Table Image -->
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240508203454668.png" alt="State Table">
+</div>
+
+<p>
+  These two representations are versions of a bar plot and can be preferred in different contexts.
+</p>
+
+<h1>Qubits</h1>
+<p>
+  A qubit is a digit in the binary representation of outcomes. A quantum system with a single qubit has two possible outcomes, 0 or 1. A two-qubit system has four possible outcomes, consisting of all two-digit binary numbers:
+</p>
+
+<!-- List of Two-Qubit Outcomes -->
+<div class="math">
+  $$ 0 = 00_2 \tag{7} $$
+</div>
+<div class="math">
+  $$ 1 = 01_2 \tag{8} $$
+</div>
+<div class="math">
+  $$ 2 = 10_2 \tag{9} $$
+</div>
+<div class="math">
+  $$ 3 = 11_2 \tag{10} $$
+</div>
+
+<p>
+  Similarly, a three-qubit system has eight possible outcomes, consisting of all three-digit binary numbers:
+</p>
+
+<!-- List of Three-Qubit Outcomes -->
+<div class="math">
+  $$ 0 = 000_2 \tag{11} $$
+</div>
+<div class="math">
+  $$ 1 = 001_2 \tag{12} $$
+</div>
+<div class="math">
+  $$ 2 = 010_2 \tag{13} $$
+</div>
+<div class="math">
+  $$ 3 = 011_2 \tag{14} $$
+</div>
+<div class="math">
+  $$ 4 = 100_2 \tag{15} $$
+</div>
+<div class="math">
+  $$ 5 = 101_2 \tag{16} $$
+</div>
+<div class="math">
+  $$ 6 = 110_2 \tag{17} $$
+</div>
+<div class="math">
+  $$ 7 = 111_2 \tag{18} $$
+</div>
+
+<p>
+  In general, an \(n\)-qubit quantum system supports quantum computations with:
+</p>
+
+<!-- General Formula for Outcomes -->
+<div class="math">
+  $$ N = 2^n \tag{19} $$
+</div>
+<p>
+  outcomes.
+</p>
+
+<h1>One-Qubit Systems</h1>
+
+<p>How do we explain the difference between a classical and a quantum bit? A quantum bit, or better said, a one-qubit system, has a probability with direction for each of the two possible outcomes, while in a classical bit, exactly one outcome is possible. We represent outcomes with circle sectors, and directions with colors on a color wheel. For two outcomes, the sectors are semi-circles. Note that the comparison works only for one-(qu)bit systems, not for a (qu)bit in a larger system. Many comparisons in the quantum computing literature are incorrect or incomplete, especially those saying that a qubit can have any value between 0 and 1. </p>
+
+<div class="image-container">
+    <img src="https://learnqc.com/intro_files/image-20240508203542405.png">
+</div>
+
+<h1>Single-Qubit Gates</h1>
+
+<p>
+  We visualize the effect of applying quantum gates using table comprehensions, state tables, and color wheels.
+</p>
+
+<p>The X-gate, also called the NOT gate, swaps the amplitudes corresponding to a pair of outcomes.</p>
+<div id="X" class="app"></div>
+
+<p>Applying a Y-gate to a single-qubit state changes both the directions and swaps the probabilities, as shown in the diagram.</p>
+<div id="Y" class="app"></div>
+
+<p>This gate multiplies the 1-side of a pair of amplitudes by -1. It changes the signs of both the real and imaginary parts of the amplitude of the 1-side of the pair.</p>
+<div id="Z" class="app"></div>
+
+<p>
+    The Hadamard gate (or H-gate), named after the famous mathematician Jacques Hadamard, replaces an amplitude pair with their sum and difference divided by the square root of 2.
+  </p>
+  <div id="H" class="app"></div>
+
+  <p>
+    The Phase gate rotates the 1-side of a pair of amplitudes by a given angle.
+  </p>
+  <div id="Phase" class="app"></div>
+
+  <p>
+    For a given angle θ, the RZ(θ)-gate rotates the 0-side of a pair of amplitudes counterclockwise by θ/2, and the 1-side of a pair of amplitudes clockwise by θ/2.
+  </p>
+  <div id="RZ" class="app"></div>
+
+  
+  <h1>Quantum Transformations</h1>
+
+  <p>An elementary quantum transformation is a single-qubit gate applied to a target qubit.</p>
+
+  <p>We can visualize and explain quantum state evolution with elementary quantum gates using the important, but often ignored fact that amplitudes change in pairs, with the pairing depending on the target of a gate application. If the target qubit is t, two outcomes are paired if their binary representation differ only in the digit t. This means that their difference is</p>
+
+  <div class="math">
+    $$ 2^t \tag{20} $$
+  </div>
+
+  <p>We can represent the pairing of outcomes and amplitudes with two generic rows in a table:</p>
+
+  <div class="image-container">
+    <img src="https://learnqc.com/intro_files/image-20240509223253473.png">
+</div>
+
+<p>We can use state tables and polar (circular) representations, but we can also reference the "butterfly" diagrams used in the Fast Fourier Transform literature. In fact, the process of applying an elementary quantum gate is virtually the same as a stage in the (most common implementation of the) Fast Fourier Transform algorithm. </p>
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240508204008006.png">
+</div>
+
+<p>Each gate comes with its own formula, which is applied to all pairs of amplitudes. </p>
+
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240508204034318.png">
+</div>
+
+<p>As an example, let's look at a visualization of the effect of applying the X-gate on qubit 0 of a three-qubit system. The amplitudes in each pair are swapped. For other gates, a different formula is applied to recombine the amplitudes in each pair, but the pairing mechanism is the same.</p>
+
+<div id="quantum-viewer-container" class="app"></div>
+
+
+
+</body>
+</html>
