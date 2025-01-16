@@ -71,11 +71,14 @@ function process_pair(state, gate, k0=0, k1=1) {
     const y = state[k1];
     state[k0] = math.add(math.multiply(x, gate[0][0]), math.multiply(y, gate[0][1]));
     state[k1] = math.add(math.multiply(x, gate[1][0]), math.multiply(y, gate[1][1]));
+
+    console.log("processed pair!");
 }
 
 function transform(state, t, gate) {
     const n = Math.log2(state.length);
     for (const [k0, k1] of pair_generator(n, t)) {
+        console.log("k0: ", k0, "k1: ", k1);
         if (k1 >= state.length) {
             continue;
         }

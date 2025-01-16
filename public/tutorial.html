@@ -320,6 +320,39 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   </p>
   <div id="RZ" class="app"></div>
 
+  
+  <h1>Quantum Transformations</h1>
+
+  <p>An elementary quantum transformation is a single-qubit gate applied to a target qubit.</p>
+
+  <p>We can visualize and explain quantum state evolution with elementary quantum gates using the important, but often ignored fact that amplitudes change in pairs, with the pairing depending on the target of a gate application. If the target qubit is t, two outcomes are paired if their binary representation differ only in the digit t. This means that their difference is</p>
+
+  <div class="math">
+    $$ 2^t \tag{20} $$
+  </div>
+
+  <p>We can represent the pairing of outcomes and amplitudes with two generic rows in a table:</p>
+
+  <div class="image-container">
+    <img src="https://learnqc.com/intro_files/image-20240509223253473.png">
+</div>
+
+<p>We can use state tables and polar (circular) representations, but we can also reference the "butterfly" diagrams used in the Fast Fourier Transform literature. In fact, the process of applying an elementary quantum gate is virtually the same as a stage in the (most common implementation of the) Fast Fourier Transform algorithm. </p>
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240508204008006.png">
+</div>
+
+<p>Each gate comes with its own formula, which is applied to all pairs of amplitudes. </p>
+
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240508204034318.png">
+</div>
+
+<p>As an example, let's look at a visualization of the effect of applying the X-gate on qubit 0 of a three-qubit system. The amplitudes in each pair are swapped. For other gates, a different formula is applied to recombine the amplitudes in each pair, but the pairing mechanism is the same.</p>
+
+
 
 
 
