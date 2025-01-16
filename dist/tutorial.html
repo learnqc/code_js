@@ -6,7 +6,6 @@
   <title>Quantum Gate Simulator</title>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjs/lib/browser/math.js"></script>
-  <script type="module" src="./app.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -68,7 +67,7 @@
       margin-bottom: 20px;
     }
   </style>
-<script defer src="vendors-node_modules_lit_index_js.bundle.js"></script><script defer src="tutorial.bundle.js"></script></head>
+<script defer src="vendors-node_modules_mathjs_lib_esm_entry_pureFunctionsAny_generated_js.bundle.js"></script><script defer src="vendors-node_modules_lit_index_js.bundle.js"></script><script defer src="tutorial.bundle.js"></script></head>
 <body>
   <h1>You Understand It if You Can Model It</h1>
   <p>To make quantum computers, you need to know a lot about quantum physics. But to use them, you don't need to know all that. With this introduction, you will be able to model quantum computations by creating a simple quantum simulator with a few lines of code, as detailed in an appendix.</p>
@@ -352,7 +351,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 
 <p>As an example, let's look at a visualization of the effect of applying the X-gate on qubit 0 of a three-qubit system. The amplitudes in each pair are swapped. For other gates, a different formula is applied to recombine the amplitudes in each pair, but the pairing mechanism is the same.</p>
 
-
+<div id="quantum-viewer-container" class="app"></div>
 
 
 

@@ -1,4 +1,5 @@
 import '../lib/algos/component.js';
+import '../lib/algos/component2.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const gates = [
@@ -27,4 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.appendChild(gateContainer);
     });
+
+    const viewerContainer = document.getElementById('quantum-viewer-container');
+
+    // Create an instance of the Quantum State Viewer
+    const quantumViewer = document.createElement('quantum-state-viewer');
+  
+    // Set the initial properties (if needed)
+    quantumViewer.gate = 'X'; // Example: setting the X-gate
+  
+    // Append the Quantum State Viewer to the container
+    viewerContainer.appendChild(quantumViewer);
+
 });
