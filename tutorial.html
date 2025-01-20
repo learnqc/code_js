@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quantum Gate Simulator</title>
+  <script src="https://cdn.jsdelivr.net/npm/mathjs@11.0.0/lib/browser/math.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.37.0/min/vs/editor/editor.main.css">
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjs/lib/browser/math.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -63,11 +64,81 @@
       max-height: 300px; /* Maintain aspect ratio */
     }
 
-    div {
+    /* div {
       margin-bottom: 20px;
+    } */
+
+    .step-container {
+      margin: 20px auto;
+      width: 80%;
+      max-width: 1200px; /* Keeps content from being too wide */
+      background-color: #FFFFFF; /* White container background */
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
     }
+
+/* Code editor container */
+.editor-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 2000px; /* Fixed height */
+  margin: 20px auto;
+  width: 100%; /* Fill parent container */
+  background-color: #F8F9FA; /* Light gray background */
+  border: 1px solid #E0E0E0; /* Light border */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Monaco editor fills container */
+.editor-container .monaco-editor {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+
+
+    .run-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+      padding: 8px 12px;
+      background-color: #6C7A89; /* Soft blue-gray */
+      border: none;
+      border-radius: 5px;
+      color: #FFF; /* White text */
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .run-button:hover {
+      background-color: #4B5B6A; /* Darker hover color */
+    }
+
+    .output {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #F9F9F9; /* Very light gray */
+      border: 1px solid #E0E0E0;
+      border-radius: 5px;
+      color: #444;
+      font-family: monospace;
+      overflow-y: auto;
+      height: 500px; /* Fixed height */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
   </style>
-<script defer src="vendors-node_modules_mathjs_lib_esm_entry_pureFunctionsAny_generated_js.bundle.js"></script><script defer src="vendors-node_modules_lit_index_js.bundle.js"></script><script defer src="tutorial.bundle.js"></script></head>
+<script defer src="vendors-node_modules_microsoft_quantum-viz_js_dist_qviz_min_js-node_modules_d3_src_index_js-n-46cfdf.bundle.js"></script><script defer src="vendors-node_modules_lit_index_js.bundle.js"></script><script defer src="src_lib_simulator_core_js-src_lib_simulator_gates_js.bundle.js"></script><script defer src="tutorial.bundle.js"></script></head>
 <body>
   <h1>You Understand It if You Can Model It</h1>
   <p>To make quantum computers, you need to know a lot about quantum physics. But to use them, you don't need to know all that. With this introduction, you will be able to model quantum computations by creating a simple quantum simulator with a few lines of code, as detailed in an appendix.</p>
@@ -351,7 +422,184 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 
 <p>As an example, let's look at a visualization of the effect of applying the X-gate on qubit 0 of a three-qubit system. The amplitudes in each pair are swapped. For other gates, a different formula is applied to recombine the amplitudes in each pair, but the pairing mechanism is the same.</p>
 
+<p>Try with target qubits 0, 1, and 2: </p>
+
 <div id="quantum-viewer-container" class="app"></div>
+
+<h1>Controlled Transformations</h1>
+
+<p>A gate-based quantum transformation applies a quantum gate to a target qubit and has a number of control qubits (different from the target). The same gate formula is used to process amplitude pairs, but only the paired outcomes that have 1 in the control positions get their amplitudes processed. For example, in a three-qubit system, if the middle qubit is a control qubit, the outcomes that have 0 as the middle digit in their binary representation are left unchanged. They are shown grayed out in the image that shows the pairs corresponding to target qubit 0. The paired outcomes differ only in the last digit (qubit 0).</p>
+<p>Try different target and control qubits: </p>
+<div id="quantum-viewer-container-2" class="app"></div>
+
+<h1>Quantum Parallelism</h1>
+
+<p>The behavior of quantum gates is a fascinating blend of the familiar and the unexpected.  Just as we're accustomed to transfers between investments, quantum gates act similarly, transferring amplitudes (balances) between outcomes (accounts).  However, here's where the twist lies: unlike in our everyday world, these "transfers" occur simultaneously, governed by the same mathematical formula. This is called quantum parallelism.</p>
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240508204614194.png">
+</div>
+
+
+<p>This simultaneous operation is the secret sauce of quantum computing, offering unparalleled advantages in certain applications. Yet, this very feature also restricts the types of problems that can benefit from a quantum approach.</p>
+
+<h1>Superposition and Entanglement</h1>
+
+<p>These quantum mechanics concepts are crucial to the implementation of quantum computers, but are not directly relevant to quantum computing. Quantum superposition expresses the uncertainty of what outcome will be observed in a measurement. Quantum entanglement refers to the fact that individual qubit measurements are not always independent of each other. It is the implementation mechanism for controlled transformations.</p>
+
+<h1>Quantum Measurement</h1>
+
+<p>How can we visualize the measurement operation of a quantum state? In the measurement context, a quantum state is essentially a probability distribution. The probability of an outcome is the squared magnitude of its amplitude. Measurement is sampling from this probability distribution, and the measurement outcome is the sample. This outcome receives probability 1 after measurement. We visualize the state as a rose (polar area) diagram, which is the circular version of a bar chart, and the measurement as spinning this diagram. The resulting collapsed state is a rose diagram where the measurement outcome has probability 1 (and the rest of the outcomes have probability 0). </p>
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240508204711688.png">
+</div>
+
+<h1>The Structure of Quantum Computations</h1>
+
+<p>Putting the fundamentals together: start with the default quantum state, change it with quantum transformations, measure it, record the outcome and repeat. </p>
+
+<p>Here is an example of a one-qubit system evolution and measurement.</p>
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240504180233979.png">
+</div>
+
+<p>We can visualize the general case of running a one-qubit quantum computation as follows.</p>
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240504181123440.png">
+</div>
+
+<p>similarly, we can visualize the process of running a multi-qubit computation.</p>
+
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240504181851864.png">
+</div>
+
+<h1>Quantum Circuits</h1>
+
+<p>A quantum program, or circuit, consists of a sequence of quantum transformations. A typical transformation in a qubit-based quantum system is defined by a single-qubit gate, a target qubit, and a number of other control qubits.</p>
+
+
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240502221555748.png">
+</div>
+
+<p>We can show circuits together with the states before and after their application.</p>
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240502222048460.png">
+</div>
+
+<h1>Each Circuit Is Reversible</h1>
+<p>
+  An important property of quantum transformations is that they are reversible: each has an inverse that cancels its action.
+  The inverse of a transformation is obtained by using the inverse of its underlying elementary gate, and keeping the target and controls as they are.
+</p>
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240506115025855.png">
+</div>
+<p>
+  The inverse of a circuit is obtained by applying the inverses of its transformations in reversed order.
+</p>
+
+<h1>Quantum Advantage</h1>
+<p>
+  Quantum advantage comes from exploiting quantum parallelism and measurement. In order to exploit parallelism, we need to counter its side effect:
+  all amplitudes change in pairs according to a common formula. This is done through interference, where simultaneous changes to the numbers
+  comprising a quantum state have to be balanced with the right types of changes. There are a few sources of useful natural interference,
+  mostly present in the Phase Estimation and Amplitude Amplification algorithms. Since interference is hard, people try to find it using brute
+  force search (variational algorithms). This is similar to finding weights for a neural network, but much more complex, hence the “brute force” term.
+</p>
+<blockquote>
+  <p>
+    "The goal in devising an algorithm for a quantum computer is to choreograph a pattern of constructive and destructive interference so that for
+    each wrong answer the contributions to its amplitude cancel each other out, whereas for the right answer the contributions reinforce each other.
+    If, and only if, you can arrange that, you’ll see the right answer with a large probability when you look."
+  </p>
+  <p>
+    -- Scott Aaronson, <em>What Makes Quantum Computing So Hard to Explain?</em> June 8, 2021,
+    <a href="https://www.quantamagazine.org/why-is-quantum-computing-so-hard-to-explain-20210608/">
+      Quanta Magazine
+    </a>
+  </p>
+</blockquote>
+<p>
+  Looking for quantum advantage is essentially looking for sources of interference.
+</p>
+
+<h1>What Problems Can Benefit From a Quantum Approach?</h1>
+<p>
+  Quantum computing is very specialized, and will not replace traditional computing, in the same way helicopters cannot replace cars.
+  Quantum parallelism and quantum measurement can help solve problems that cannot easily be solved with classical computers, but at the same
+  time they are not the right solution for most computing needs.
+</p>
+<p>
+  There are three main quantum computing patterns: sampling from probability distributions, searching for optimal values, and estimating the probability
+  of certain computation outcomes. These patterns are described in more detail at
+  <a href="https://learnqc.com">learnqc.com</a>.
+</p>
+
+<h1>Conclusion</h1>
+<p>
+  The concepts introduced in this document give enough information to define the implementation of a simple quantum simulator. We include such
+  a simple implementation in Appendix B, where we also include a simple test, and its equivalent in Qiskit, IBM’s quantum framework. The same
+  concepts have been used both in a learning version of a simulator, called Hume:
+  <a href="https://github.com/learnqc/code">https://github.com/learnqc/code</a>, and a high-performance simulator written in Rust, called Spinoza:
+  <a href="https://github.com/QuState/spinoza">https://github.com/QuState/spinoza</a>.
+</p>
+
+<h1>Appendix A: Multi-Target Transformations</h1>
+<p>
+  How do we visualize multi-target (sometimes called multi-qubit) transformations? We showed how single-qubit gates recombine pairs of amplitudes.
+  It turns out that multi-target transformations process groups of amplitudes, and preserve the combined probability of each group. We can use the
+  same type of visualization for the groups, where each group is represented by an arc, and each outcome belongs to exactly one group. The way the
+  grouping is done depends on the target qubits. A single maximum size unitary processes all amplitudes as a group. While there are theoretical
+  reasons to use such unitaries, most of the time we don't need to. It is more efficient to use a for loop to process the groups than to use a
+  single giant unitary, and then rely on other tools to avoid multiplications by 0 and 1.
+</p>
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240508204754643.png" alt="Multi-Target Transformation Visualization">
+</div>
+
+<p>
+  We can see that the arc diagrams have an advantage over the butterfly diagrams used in the Fast Fourier Transform literature. The arcs don’t
+  intersect, and they can capture all members of a group nicely.
+</p>
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240508204825171.png" alt="Multi-Target Transformation Visualization">
+</div>
+
+<p>
+  Also note that control qubits eliminate some groups from the processing. Only groups of outcomes having 1 as a binary digit in the control positions
+  are processed. In a simulator, this significantly speeds up computations. On real computers, control qubits are expensive.
+</p>
+
+<p>
+  You may say: "The butterfly diagrams look more like spiders than butterflies". Indeed. The "butterfly" name is established in the Fast Fourier Transform
+  literature. Butterfly diagrams show how complex numbers are recombined, while spider diagrams are wire diagrams that focus on qubits, with a complete
+  formal theory behind them. Arc diagrams show the groups of outcomes whose amplitudes are transformed by a unitary.
+</p>
+
+<div class="image-container">
+  <img src="https://learnqc.com/intro_files/image-20240508204906735.png" alt="Butterflies vs Spiders vs Arcs Comparison">
+</div>
+
+
+<h1>Appendix B: Code Implementation</h1>
+
+  <div id="tutorial"></div>
+
+  <div id="editorContainer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.37.0/min/vs/loader.js"></script>
+
+
 
 
 
