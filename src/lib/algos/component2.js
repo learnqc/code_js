@@ -26,6 +26,14 @@ const gates = {
     [math.complex(Math.cos(theta / 2), -Math.sin(theta / 2)), 0],
     [0, math.complex(Math.cos(theta / 2), Math.sin(theta / 2))],
   ],
+  RX: (theta) => [
+    [Math.cos(theta / 2), math.complex(0, -Math.sin(theta / 2))],
+    [math.complex(0, -Math.sin(theta / 2)), Math.cos(theta / 2)],
+  ],
+  RY: (theta) => [
+    [Math.cos(theta / 2), -Math.sin(theta / 2)],
+    [Math.sin(theta / 2), Math.cos(theta / 2)],
+  ],
 };
 
 function complex_to_rgb(c, ints = false) {
@@ -64,11 +72,24 @@ function* pair_generator(n, t) {
   }
 }
 
+function is_bit_set(num, bit) {
+  return (num & (1 << bit)) !== 0;
+}
+
 function process_pair(state, gate, k0 = 0, k1 = 1) {
   const x = state[k0];
   const y = state[k1];
   state[k0] = math.add(math.multiply(x, gate[0][0]), math.multiply(y, gate[0][1]));
   state[k1] = math.add(math.multiply(x, gate[1][0]), math.multiply(y, gate[1][1]));
+}
+
+function c_transform(state, c, t, gate) {
+  const n = Math.log2(state.length);
+  for (const [k0, k1] of Array.from(pair_generator(n, t)).filter((p) =>
+    is_bit_set(p[0], c)
+  )) {
+    process_pair(state, gate, k0, k1);
+  }
 }
 
 export class QuantumStateViewer extends LitElement {
@@ -95,12 +116,15 @@ export class QuantumStateViewer extends LitElement {
       height: 10px;
     }
     .buttons {
-      margin: 10px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 15px 0;
+      justify-content: center;
     }
     button,
     select,
     input {
-      margin-right: 10px;
       padding: 10px 15px;
       font-size: 1rem;
       cursor: pointer;
@@ -113,39 +137,46 @@ export class QuantumStateViewer extends LitElement {
       background-color: lightyellow;
     }
     .slider-container {
-      margin: 20px 0;
+      display: none;
     }
-    .slider {
-      width: 100%;
-      max-width: 300px;
+    .theta-container {
+      margin-top: 10px;
     }
   `;
 
   static properties = {
     state: { type: Array },
     intermediateStates: { type: Array },
+    processedPairs: { type: Array },
     gate: { type: String },
     gateMatrix: { type: Array },
     targetQubit: { type: Number },
+    controlQubit: { type: Number },
+    controlled: { type: Boolean },
     processingPair: { type: Array },
     theta: { type: Number },
-    delay: { type: Number }, // Dynamic delay in milliseconds
+    delay: { type: Number },
+    mode: { type: String },
   };
 
   constructor() {
     super();
     this.state = [];
     this.intermediateStates = [];
+    this.processedPairs = [];
     this.gate = 'X';
     this.targetQubit = 0;
+    this.controlQubit = 0;
+    this.controlled = false;
     this.processingPair = [];
-    this.theta = Math.PI / 4; // Default angle for Phase and RZ gates
-    this.delay = 1000; // Default delay
+    this.theta = Math.PI / 4;
+    this.delay = 750; // Set default delay to 750ms
+    this.mode = 'dynamic';
     this.initializeState();
   }
 
   initializeState() {
-    const size = 8; // 3 qubits = 2^3 = 8 states
+    const size = 8;
     this.state = Array.from({ length: size }, () =>
       math.complex(Math.random() - 0.5, Math.random() - 0.5)
     );
@@ -153,12 +184,13 @@ export class QuantumStateViewer extends LitElement {
       this.state.reduce((acc, val) => math.add(acc, math.pow(math.abs(val), 2)), 0)
     );
     this.state = this.state.map((amp) => math.divide(amp, norm));
-    this.intermediateStates = [this.state.slice()]; // Store initial state
+    this.intermediateStates = [this.state.slice()];
+    this.processedPairs = [[]];
     this.processingPair = [];
   }
 
-  async applyGate() {
-    const n = Math.log2(this.state.length); // Number of qubits
+  async applyDynamicGate() {
+    const n = Math.log2(this.state.length);
     const generator = pair_generator(n, this.targetQubit);
 
     this.gateMatrix =
@@ -167,28 +199,45 @@ export class QuantumStateViewer extends LitElement {
         : gates[this.gate];
 
     for (const [k0, k1] of generator) {
-      if (k1 >= this.state.length) continue;
+      if (this.controlled && !is_bit_set(k0, this.controlQubit)) continue;
 
-      // Highlight the current pair
       this.processingPair = [k0, k1];
       this.requestUpdate();
-      await new Promise((resolve) => setTimeout(resolve, this.delay / 2)); // Highlight delay
+      await new Promise((resolve) => setTimeout(resolve, this.delay / 2));
 
-      // Process the current pair
       process_pair(this.state, this.gateMatrix, k0, k1);
 
-      // Store a copy of the state after processing the pair
       this.intermediateStates.push(this.state.slice());
-
-      // Trigger re-render
+      this.processedPairs.push([k0, k1]);
       this.requestUpdate();
-      await new Promise((resolve) => setTimeout(resolve, this.delay)); // Post-processing delay
+      await new Promise((resolve) => setTimeout(resolve, this.delay));
     }
 
-    this.processingPair = []; // Clear highlights after processing
+    this.processingPair = [];
   }
 
-  renderTable(state, title) {
+  applyStaticGate() {
+    const n = Math.log2(this.state.length);
+
+    this.gateMatrix =
+      typeof gates[this.gate] === 'function'
+        ? gates[this.gate](this.theta)
+        : gates[this.gate];
+
+    if (this.controlled) {
+      c_transform(this.state, this.controlQubit, this.targetQubit, this.gateMatrix);
+    } else {
+      for (const [k0, k1] of pair_generator(n, this.targetQubit)) {
+        process_pair(this.state, this.gateMatrix, k0, k1);
+        this.intermediateStates.push(this.state.slice());
+        this.processedPairs.push([k0, k1]);
+      }
+    }
+
+    this.requestUpdate();
+  }
+
+  renderTable(state, title, highlightIndices = []) {
     return html`
       <h4>${title}</h4>
       <table>
@@ -207,19 +256,26 @@ export class QuantumStateViewer extends LitElement {
             const magnitude = math.abs(amplitude).toFixed(4);
             const direction = ((math.arg(amplitude) * 180) / Math.PI).toFixed(1);
             const rgb = complex_to_rgb(amplitude, true);
-            const isHighlighted = this.processingPair.includes(index);
+            const isHighlighted = highlightIndices.includes(index);
             return html`
               <tr class="${isHighlighted ? 'highlight' : ''}">
                 <td>${index}</td>
-                <td>${index.toString(2).padStart(Math.log2(state.length), '0')}</td>
-                <td>${math.format(amplitude, { notation: 'fixed', precision: 4 })}</td>
+                <td>${index
+                  .toString(2)
+                  .padStart(Math.log2(state.length), '0')}</td>
+                <td>${math.format(amplitude, {
+                  notation: 'fixed',
+                  precision: 4,
+                })}</td>
                 <td>${direction}°</td>
                 <td>${magnitude}</td>
                 <td>
                   <div class="amplitude-bar">
                     <div
                       class="bar"
-                      style="width: ${magnitude * 100}%; background-color: rgb(${rgb.join(',')});"
+                      style="width: ${magnitude * 100}%; background-color: rgb(${rgb.join(
+                        ','
+                      )});"
                     ></div>
                   </div>
                 </td>
@@ -234,14 +290,30 @@ export class QuantumStateViewer extends LitElement {
   render() {
     return html`
       <div>
-        <h3>Quantum State Viewer</h3>
+        <h3>Quantum State Visualizer</h3>
         <div>
-          ${this.renderTable(
-            this.intermediateStates[this.intermediateStates.length - 1],
-            `Current State`
-          )}
+          ${this.mode === 'dynamic'
+            ? this.renderTable(
+                this.intermediateStates[this.intermediateStates.length - 1],
+                `Current State`,
+                this.processingPair
+              )
+            : this.intermediateStates.map((state, idx) =>
+                this.renderTable(state, `Step ${idx + 1}`, this.processedPairs[idx] || [])
+              )}
         </div>
         <div class="buttons">
+          <label>
+            Mode:
+            <select @change="${(e) => (this.mode = e.target.value)}">
+              <option value="dynamic" ?selected="${this.mode === 'dynamic'}">
+                Dynamic
+              </option>
+              <option value="static" ?selected="${this.mode === 'static'}">
+                Static
+              </option>
+            </select>
+          </label>
           <label>
             Gate:
             <select @change="${(e) => (this.gate = e.target.value)}">
@@ -250,6 +322,20 @@ export class QuantumStateViewer extends LitElement {
               )}
             </select>
           </label>
+          ${this.controlled
+            ? html`
+                <label>
+                  Control Qubit:
+                  <input
+                    type="number"
+                    min="0"
+                    max="${Math.log2(this.state.length) - 1}"
+                    value="${this.controlQubit}"
+                    @input="${(e) => (this.controlQubit = Number(e.target.value))}"
+                  />
+                </label>
+              `
+            : ''}
           <label>
             Target Qubit:
             <input
@@ -260,39 +346,33 @@ export class QuantumStateViewer extends LitElement {
               @input="${(e) => (this.targetQubit = Number(e.target.value))}"
             />
           </label>
-          <button @click="${this.applyGate}">
+          <button
+            @click="${
+              this.mode === 'dynamic'
+                ? this.applyDynamicGate
+                : this.applyStaticGate
+            }"
+          >
             Apply Gate
           </button>
           <button @click="${this.initializeState}">Reset</button>
         </div>
+
         ${['Phase', 'RZ'].includes(this.gate)
           ? html`
-              <label>
-                θ (radians):
-                <input
-                  type="number"
-                  step="0.1"
-                  .value="${this.theta}"
-                  @input="${(e) => (this.theta = Number(e.target.value))}"
-                />
-              </label>
+              <div class="theta-container">
+                <label>
+                  θ (radians):
+                  <input
+                    type="number"
+                    step="0.1"
+                    .value="${this.theta}"
+                    @input="${(e) => (this.theta = Number(e.target.value))}"
+                  />
+                </label>
+              </div>
             `
           : ''}
-        <div class="slider-container">
-          <label>
-            Visualization Delay:
-            <input
-              type="range"
-              min="500"
-              max="3000"
-              step="100"
-              .value="${this.delay}"
-              @input="${(e) => (this.delay = Number(e.target.value))}"
-              class="slider"
-            />
-            ${this.delay} ms
-          </label>
-        </div>
       </div>
     `;
   }
