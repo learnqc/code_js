@@ -52,40 +52,66 @@ function complex_to_rgb(c, ints = false) {
 
 export class QuantumGateSimulator extends LitElement {
   static styles = css`
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 20px 0;
-    }
-    th,
-    td {
-      border: 1px solid #ddd;
-      text-align: center;
-      padding: 8px;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-    .amplitude-bar {
-      display: flex;
-      align-items: center;
-    }
-    .bar {
-      height: 10px;
-    }
-    .buttons {
-      margin: 10px 0;
-    }
-    button {
-      margin-right: 10px;
-      padding: 10px 15px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+  overflow-x: auto;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 8px;
+  word-wrap: break-word;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+.amplitude-bar {
+  display: flex;
+  align-items: center;
+}
+
+.bar {
+  height: 10px;
+}
+
+.buttons {
+  margin: 10px 0;
+}
+
+button {
+  margin-right: 10px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Make the table scrollable horizontally on small screens */
+@media (max-width: 600px) {
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .amplitude-bar {
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .bar {
+    width: 100%;
+  }
+}
   `;
 
   static properties = {

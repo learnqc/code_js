@@ -94,54 +94,95 @@ function c_transform(state, c, t, gate) {
 
 export class QuantumStateViewer extends LitElement {
   static styles = css`
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 20px 0;
-    }
-    th,
-    td {
-      border: 1px solid #ddd;
-      text-align: center;
-      padding: 8px;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-    .amplitude-bar {
-      display: flex;
-      align-items: center;
-    }
-    .bar {
-      height: 10px;
-    }
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin: 15px 0;
-      justify-content: center;
-    }
-    button,
-    select,
-    input {
-      padding: 10px 15px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-    .highlight {
-      background-color: lightyellow;
-    }
-    .slider-container {
-      display: none;
-    }
-    .theta-container {
-      margin-top: 10px;
-    }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+  overflow-x: auto;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 8px;
+  word-wrap: break-word;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+.amplitude-bar {
+  display: flex;
+  align-items: center;
+}
+
+.bar {
+  height: 10px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 15px 0;
+  justify-content: center;
+}
+
+button,
+select,
+input {
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.highlight {
+  background-color: lightyellow;
+}
+
+.theta-container {
+  margin-top: 10px;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 600px) {
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  th,
+  td {
+    font-size: 0.9rem;
+  }
+
+  .buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .theta-container {
+    text-align: center;
+  }
+
+  .amplitude-bar {
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .bar {
+    width: 100%;
+  }
+}
   `;
 
   static properties = {
