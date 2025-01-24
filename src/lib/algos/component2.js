@@ -115,7 +115,8 @@ th {
 
 .amplitude-bar {
   display: flex;
-  align-items: center;
+  align-items: center; /* Ensures bars stay horizontally aligned */
+  justify-content: flex-start; /* Left-aligns the bars */
 }
 
 .bar {
@@ -175,12 +176,13 @@ button:disabled {
   }
 
   .amplitude-bar {
-    flex-direction: column;
-    justify-content: center;
+    display: flex;
+    align-items: center; /* Keeps bars horizontally aligned */
+    justify-content: flex-start; /* Left-aligns the bars on mobile */
   }
 
   .bar {
-    width: 100%;
+    width: 100%; /* Ensures full-width bars */
   }
 }
   `;

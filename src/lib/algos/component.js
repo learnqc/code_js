@@ -59,7 +59,8 @@ table {
   overflow-x: auto;
 }
 
-th, td {
+th,
+td {
   border: 1px solid #ddd;
   text-align: center;
   padding: 8px;
@@ -80,11 +81,16 @@ th {
 }
 
 .buttons {
-  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 15px 0;
+  justify-content: center;
 }
 
-button {
-  margin-right: 10px;
+button,
+select,
+input {
   padding: 10px 15px;
   font-size: 1rem;
   cursor: pointer;
@@ -95,7 +101,15 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Make the table scrollable horizontally on small screens */
+.highlight {
+  background-color: lightyellow;
+}
+
+.theta-container {
+  margin-top: 10px;
+}
+
+/* Responsive styles for smaller screens */
 @media (max-width: 600px) {
   table {
     display: block;
@@ -103,13 +117,29 @@ button:disabled {
     overflow-x: auto;
   }
 
-  .amplitude-bar {
+  th,
+  td {
+    font-size: 0.9rem;
+  }
+
+  .buttons {
     flex-direction: column;
-    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .theta-container {
+    text-align: center;
+  }
+
+  .amplitude-bar {
+    display: flex;
+    align-items: center; /* Keeps bars horizontally aligned */
+    justify-content: flex-start; /* Left-aligns the bars on mobile */
   }
 
   .bar {
-    width: 100%;
+    width: 100%; /* Ensures full-width bars */
   }
 }
   `;
