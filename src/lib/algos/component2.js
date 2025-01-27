@@ -107,6 +107,7 @@ td {
   text-align: center;
   padding: 8px;
   word-wrap: break-word;
+  height: 2vh;
 }
 
 th {
@@ -115,12 +116,12 @@ th {
 
 .amplitude-bar {
   display: flex;
-  align-items: center; /* Ensures bars stay horizontally aligned */
-  justify-content: flex-start; /* Left-aligns the bars */
+  align-items: left;
+  height: 100%;
 }
 
 .bar {
-  height: 10px;
+  height: 100%;
 }
 
 .buttons {
@@ -173,18 +174,6 @@ button:disabled {
 
   .theta-container {
     text-align: center;
-  }
-
-  .amplitude-bar {
-    display: flex;
-    align-items: center; /* Keeps bars horizontally aligned */
-    justify-content: flex-start; /* Left-aligns the bars on mobile */
-    height: 100%;
-  }
-
-  .bar {
-    width: 100%; /* Ensures full-width bars */
-    height: 100%;
   }
 }
   `;
