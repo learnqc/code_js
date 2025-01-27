@@ -73,11 +73,12 @@ th {
 
 .amplitude-bar {
   display: flex;
-  align-items: center;
+  align-items: left;
+  height: 100%;
 }
 
 .bar {
-  height: 10px;
+  height: 25px
 }
 
 .buttons {
@@ -136,10 +137,12 @@ button:disabled {
     display: flex;
     align-items: center; /* Keeps bars horizontally aligned */
     justify-content: flex-start; /* Left-aligns the bars on mobile */
+    height: 100%;
   }
 
   .bar {
     width: 100%; /* Ensures full-width bars */
+    height: 100%;
   }
 }
   `;
