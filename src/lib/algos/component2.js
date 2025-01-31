@@ -40,16 +40,15 @@ function complex_to_rgb(c, ints = false) {
   const a = math.re(c);
   const b = math.im(c);
   const magnitude = Math.sqrt(a * a + b * b);
-  let hue = Math.atan2(b, a) / Math.PI * 180;
+  let hue = (Math.atan2(b, a) / Math.PI) * 180;
 
   if (hue < 0) {
     hue += 360;
   }
 
+  // Simple mapping to an RGB hue-based color (this can be customized)
   const hueIndex = Math.round(hue);
-  const boundedIndex = Math.min(hueIndex, 255);
-
-  const rgb = [hueIndex, 200, 255]; // Adjust colors as needed
+  const rgb = [hueIndex, 200, 255]; // Adjust as desired
 
   if (ints) {
     return rgb;
@@ -94,102 +93,112 @@ function c_transform(state, c, t, gate) {
 
 export class QuantumStateViewer extends LitElement {
   static styles = css`
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 20px 0;
-  overflow-x: auto;
-}
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
 
-th,
-td {
-  border: 1px solid #ddd;
-  text-align: center;
-  padding: 8px;
-  word-wrap: break-word;
-  height: 2vh;
-}
+    th,
+    td {
+      border: 1px solid #ddd;
+      text-align: center;
+      padding: 8px;
+      word-wrap: break-word;
+      height: 2vh;
+    }
 
-th {
-  background-color: #f2f2f2;
-}
+    th {
+      background-color: #f2f2f2;
+    }
 
-.amplitude-bar {
-  display: flex;
-  align-items: left;
-  height: 100%;
-}
+    .amplitude-bar {
+      display: flex;
+      align-items: left;
+      height: 100%;
+    }
 
-.bar {
-  height: 100%;
-}
+    .bar {
+      height: 100%;
+    }
 
-.buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin: 15px 0;
-  justify-content: center;
-}
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 15px 0;
+      justify-content: center;
+    }
 
-button,
-select,
-input {
-  padding: 10px 15px;
-  font-size: 1rem;
-  cursor: pointer;
-}
+    button,
+    select,
+    input {
+      padding: 10px 15px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
 
-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
 
-.highlight {
-  background-color: lightyellow;
-}
+    .highlight {
+      background-color: lightyellow;
+    }
 
-.theta-container {
-  margin-top: 10px;
-}
+    .theta-container {
+      margin-top: 10px;
+    }
 
-/* Responsive styles for smaller screens */
-@media (max-width: 600px) {
-  table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-  }
+    /* Responsive styles for smaller screens */
+    @media (max-width: 600px) {
+      table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+      }
 
-  th,
-  td {
-    font-size: 0.9rem;
-  }
+      th,
+      td {
+        font-size: 0.9rem;
+      }
 
-  .buttons {
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
+      .buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
 
-  .theta-container {
-    text-align: center;
-  }
-}
+      .theta-container {
+        text-align: center;
+      }
+    }
   `;
 
   static properties = {
     state: { type: Array },
     intermediateStates: { type: Array },
     processedPairs: { type: Array },
+
+    // Gate-related
     gate: { type: String },
     gateMatrix: { type: Array },
+
     targetQubit: { type: Number },
     controlQubit: { type: Number },
     controlled: { type: Boolean },
+
+    // For dynamic stepping
     processingPair: { type: Array },
+    dynamicSteps: { type: Array },
+    stepIndex: { type: Number },
+
+    // Parameterized gates
     theta: { type: Number },
-    delay: { type: Number },
+
+    // Visualization mode
     mode: { type: String },
   };
 
@@ -203,27 +212,37 @@ button:disabled {
     this.controlQubit = 0;
     this.controlled = false;
     this.processingPair = [];
+    this.dynamicSteps = [];
+    this.stepIndex = 0;
     this.theta = Math.PI / 4;
-    this.delay = 750; // Set default delay to 750ms
     this.mode = 'dynamic';
     this.initializeState();
   }
 
   initializeState() {
-    const size = 8;
+    const size = 8; // Example: 3 qubits => 2^3 = 8 states
     this.state = Array.from({ length: size }, () =>
       math.complex(Math.random() - 0.5, Math.random() - 0.5)
     );
+
+    // Normalize
     const norm = math.sqrt(
       this.state.reduce((acc, val) => math.add(acc, math.pow(math.abs(val), 2)), 0)
     );
     this.state = this.state.map((amp) => math.divide(amp, norm));
+
+    // Reset stored steps for visualization
     this.intermediateStates = [this.state.slice()];
     this.processedPairs = [[]];
     this.processingPair = [];
+    this.dynamicSteps = [];
+    this.stepIndex = 0;
   }
 
-  async applyDynamicGate() {
+  // ----------------------------
+  // DYNAMIC MODE (step-by-step)
+  // ----------------------------
+  applyDynamicGate() {
     const n = Math.log2(this.state.length);
     const generator = pair_generator(n, this.targetQubit);
 
@@ -232,24 +251,46 @@ button:disabled {
         ? gates[this.gate](this.theta)
         : gates[this.gate];
 
+    // Collect all the pairs we will process
+    this.dynamicSteps = [];
     for (const [k0, k1] of generator) {
       if (this.controlled && !is_bit_set(k0, this.controlQubit)) continue;
-
-      this.processingPair = [k0, k1];
-      this.requestUpdate();
-      await new Promise((resolve) => setTimeout(resolve, this.delay / 2));
-
-      process_pair(this.state, this.gateMatrix, k0, k1);
-
-      this.intermediateStates.push(this.state.slice());
-      this.processedPairs.push([k0, k1]);
-      this.requestUpdate();
-      await new Promise((resolve) => setTimeout(resolve, this.delay));
+      this.dynamicSteps.push([k0, k1]);
     }
 
-    this.processingPair = [];
+    // Reset any previous step info, but keep current state as the start
+    this.intermediateStates = [this.state.slice()];
+    this.processedPairs = [[]];
+    this.stepIndex = 0;
+
+    // Set the first pair to highlight (if any)
+    this.processingPair = this.dynamicSteps.length > 0 ? this.dynamicSteps[0] : [];
+    this.requestUpdate();
   }
 
+  nextStep() {
+    // Process the next pair in the list
+    if (this.stepIndex >= this.dynamicSteps.length) return;
+
+    const [k0, k1] = this.dynamicSteps[this.stepIndex];
+    process_pair(this.state, this.gateMatrix, k0, k1);
+
+    // Keep track of intermediate states and which pair was processed
+    this.intermediateStates.push(this.state.slice());
+    this.processedPairs.push([k0, k1]);
+
+    this.stepIndex++;
+
+    // Highlight the next pair if there is one
+    this.processingPair =
+      this.stepIndex < this.dynamicSteps.length ? this.dynamicSteps[this.stepIndex] : [];
+
+    this.requestUpdate();
+  }
+
+  // -------------------------
+  // STATIC MODE (all at once)
+  // -------------------------
   applyStaticGate() {
     const n = Math.log2(this.state.length);
 
@@ -258,16 +299,17 @@ button:disabled {
         ? gates[this.gate](this.theta)
         : gates[this.gate];
 
+    // If controlled, only process pairs whose k0 has control-bit set
     if (this.controlled) {
       c_transform(this.state, this.controlQubit, this.targetQubit, this.gateMatrix);
     } else {
       for (const [k0, k1] of pair_generator(n, this.targetQubit)) {
         process_pair(this.state, this.gateMatrix, k0, k1);
+        // For illustration, store each step (optional if you don't need every step)
         this.intermediateStates.push(this.state.slice());
         this.processedPairs.push([k0, k1]);
       }
     }
-
     this.requestUpdate();
   }
 
@@ -294,9 +336,9 @@ button:disabled {
             return html`
               <tr class="${isHighlighted ? 'highlight' : ''}">
                 <td>${index}</td>
-                <td>${index
-                  .toString(2)
-                  .padStart(Math.log2(state.length), '0')}</td>
+                <td>
+                  ${index.toString(2).padStart(Math.log2(state.length), '0')}
+                </td>
                 <td>${math.format(amplitude, {
                   notation: 'fixed',
                   precision: 4,
@@ -307,9 +349,8 @@ button:disabled {
                   <div class="amplitude-bar">
                     <div
                       class="bar"
-                      style="width: ${magnitude * 100}%; background-color: rgb(${rgb.join(
-                        ','
-                      )});"
+                      style="width: ${magnitude * 100}%;
+                             background-color: rgb(${rgb.join(',')});"
                     ></div>
                   </div>
                 </td>
@@ -322,32 +363,40 @@ button:disabled {
   }
 
   render() {
+    // In dynamic mode, show only the latest state
+    // In static mode, show each intermediate state in a sequence
+    const isDynamic = this.mode === 'dynamic';
+    const currentState = isDynamic
+      ? this.intermediateStates[this.intermediateStates.length - 1]
+      : null;
+
     return html`
       <div>
         <h3>Quantum State Visualizer</h3>
+
+        <!-- Render tables -->
         <div>
-          ${this.mode === 'dynamic'
-            ? this.renderTable(
-                this.intermediateStates[this.intermediateStates.length - 1],
-                `Current State`,
-                this.processingPair
-              )
+          ${isDynamic
+            ? this.renderTable(currentState, `Current State`, this.processingPair)
             : this.intermediateStates.map((state, idx) =>
-                this.renderTable(state, `Step ${idx + 1}`, this.processedPairs[idx] || [])
+                this.renderTable(
+                  state,
+                  `Step ${idx + 1}`,
+                  this.processedPairs[idx] || []
+                )
               )}
         </div>
+
+        <!-- Controls -->
         <div class="buttons">
           <label>
             Mode:
             <select @change="${(e) => (this.mode = e.target.value)}">
-              <option value="dynamic" ?selected="${this.mode === 'dynamic'}">
-                Dynamic
-              </option>
-              <option value="static" ?selected="${this.mode === 'static'}">
-                Static
-              </option>
+              <option value="dynamic" ?selected="${this.mode === 'dynamic'}">Dynamic</option>
+              <option value="static" ?selected="${this.mode === 'static'}">Static</option>
             </select>
           </label>
+
           <label>
             Gate:
             <select @change="${(e) => (this.gate = e.target.value)}">
@@ -356,6 +405,7 @@ button:disabled {
               )}
             </select>
           </label>
+
           ${this.controlled
             ? html`
                 <label>
@@ -364,35 +414,48 @@ button:disabled {
                     type="number"
                     min="0"
                     max="${Math.log2(this.state.length) - 1}"
-                    value="${this.controlQubit}"
+                    .value="${this.controlQubit}"
                     @input="${(e) => (this.controlQubit = Number(e.target.value))}"
                   />
                 </label>
               `
             : ''}
+
           <label>
             Target Qubit:
             <input
               type="number"
               min="0"
               max="${Math.log2(this.state.length) - 1}"
-              value="${this.targetQubit}"
+              .value="${this.targetQubit}"
               @input="${(e) => (this.targetQubit = Number(e.target.value))}"
             />
           </label>
+
+          <!-- Apply gate button(s) -->
           <button
-            @click="${
-              this.mode === 'dynamic'
-                ? this.applyDynamicGate
-                : this.applyStaticGate
-            }"
+            @click="${isDynamic ? this.applyDynamicGate : this.applyStaticGate}"
           >
             Apply Gate
           </button>
+
+          <!-- Only show 'Next Step' button in dynamic mode -->
+          ${isDynamic
+            ? html`
+                <button
+                  @click="${this.nextStep}"
+                  ?disabled="${this.stepIndex >= this.dynamicSteps.length}"
+                >
+                  Next Step
+                </button>
+              `
+            : ''}
+
           <button @click="${this.initializeState}">Reset</button>
         </div>
 
-        ${['Phase', 'RZ'].includes(this.gate)
+        <!-- Theta input for gates that require an angle -->
+        ${['Phase', 'RZ', 'RX', 'RY'].includes(this.gate)
           ? html`
               <div class="theta-container">
                 <label>
