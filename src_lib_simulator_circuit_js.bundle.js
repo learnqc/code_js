@@ -19,6 +19,16 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
+/***/ "./src/lib/simulator/gates.js":
+/*!************************************!*\
+  !*** ./src/lib/simulator/gates.js ***!
+  \************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   h: () => (/* binding */ h),\n/* harmony export */   phase: () => (/* binding */ phase),\n/* harmony export */   rx: () => (/* binding */ rx),\n/* harmony export */   ry: () => (/* binding */ ry),\n/* harmony export */   rz: () => (/* binding */ rz),\n/* harmony export */   x: () => (/* binding */ x),\n/* harmony export */   y: () => (/* binding */ y),\n/* harmony export */   z: () => (/* binding */ z)\n/* harmony export */ });\n/* harmony import */ var mathjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! mathjs */ \"./node_modules/mathjs/lib/esm/entry/pureFunctionsAny.generated.js\");\n\n\nconst x = [\n    [0, 1],\n    [1, 0]\n];\n\nconst z = [\n    [1, 0],\n    [0, -1]\n];\n\nfunction phase(theta) {\n    return [\n        [1, 0],\n        [0, mathjs__WEBPACK_IMPORTED_MODULE_0__.complex(Math.cos(theta), Math.sin(theta))]\n    ];\n}\n\nconst h = [\n    [1 / Math.sqrt(2), 1 / Math.sqrt(2)],\n    [1 / Math.sqrt(2), -1 / Math.sqrt(2)]\n];\n\nfunction rz(theta) {\n    return [\n        [mathjs__WEBPACK_IMPORTED_MODULE_0__.complex(Math.cos(theta / 2), -Math.sin(theta / 2)), 0],\n        [0, mathjs__WEBPACK_IMPORTED_MODULE_0__.complex(Math.cos(theta / 2), Math.sin(theta / 2))]\n    ];\n}\n\nconst y = [\n    [0, mathjs__WEBPACK_IMPORTED_MODULE_0__.complex(0, -1)],\n    [mathjs__WEBPACK_IMPORTED_MODULE_0__.complex(0, 1), 0]\n];\n\nfunction rx(theta) {\n    return [\n        [Math.cos(theta / 2), mathjs__WEBPACK_IMPORTED_MODULE_0__.complex(0, -Math.sin(theta / 2))],\n        [mathjs__WEBPACK_IMPORTED_MODULE_0__.complex(0, -Math.sin(theta / 2)), Math.cos(theta / 2)]\n    ];\n}\n\nfunction ry(theta) {\n    return [\n        [Math.cos(theta / 2), -Math.sin(theta / 2)],\n        [Math.sin(theta / 2), Math.cos(theta / 2)]\n    ];\n}\n\n\n\n\n//# sourceURL=webpack://humejs/./src/lib/simulator/gates.js?");
+
+/***/ }),
+
 /***/ "./src/lib/utils/matrix.js":
 /*!*********************************!*\
   !*** ./src/lib/utils/matrix.js ***!

@@ -138,7 +138,7 @@
     }
 
   </style>
-<script defer src="vendors-node_modules_microsoft_quantum-viz_js_dist_qviz_min_js-node_modules_d3_src_index_js-n-46cfdf.bundle.js"></script><script defer src="vendors-node_modules_lit_index_js.bundle.js"></script><script defer src="src_lib_simulator_core_js-src_lib_simulator_gates_js.bundle.js"></script><script defer src="tutorial.bundle.js"></script></head>
+<script defer src="vendors-node_modules_microsoft_quantum-viz_js_dist_qviz_min_js-node_modules_d3_src_index_js-n-46cfdf.bundle.js"></script><script defer src="vendors-node_modules_lit_index_js.bundle.js"></script><script defer src="src_lib_simulator_core_js.bundle.js"></script><script defer src="tutorial.bundle.js"></script></head>
 <body>
   <h1>You Understand It if You Can Model It</h1>
   <p>To make quantum computers, you need to know a lot about quantum physics. But to use them, you don't need to know all that. With this introduction, you will be able to model quantum computations by creating a simple quantum simulator with a few lines of code, as detailed in an appendix.</p>
@@ -597,6 +597,104 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 
 
 <h1>Appendix B: Code Implementation</h1>
+
+<pre style="background-color: #f0f0f0; padding: 10px; border-radius: 5px; text-align: left; max-width: 80%; margin: 0 auto;">
+  <code>
+  const x = [[0, 1], [1, 0]];
+  const z = [[1, 0], [0, -1]];
+  
+  function phase(theta) {
+    return [[1, 0], [0, math.complex(Math.cos(theta), Math.sin(theta))]];
+  }
+  
+  const h = [[1 / Math.sqrt(2), 1 / Math.sqrt(2)], [1 / Math.sqrt(2), -1 / Math.sqrt(2)]];
+  
+  function rz(theta) {
+    return [
+      [math.complex(Math.cos(theta / 2), -Math.sin(theta / 2)), 0],
+      [0, math.complex(Math.cos(theta / 2), Math.sin(theta / 2))]
+    ];
+  }
+  
+  const y = [[0, math.complex(0, -1)], [math.complex(0, 1), 0]];
+  
+  function rx(theta) {
+    return [
+      [Math.cos(theta / 2), math.complex(0, -Math.sin(theta / 2))],
+      [math.complex(0, -Math.sin(theta / 2)), Math.cos(theta / 2)]
+    ];
+  }
+  
+  function ry(theta) {
+    return [
+      [Math.cos(theta / 2), -Math.sin(theta / 2)],
+      [Math.sin(theta / 2), Math.cos(theta / 2)]
+    ];
+  }
+  
+  function initState(n) {
+    const state = Array(2 ** n).fill(0);
+    state[0] = 1;
+    return state;
+  }
+  
+  function isBitSet(m, k) {
+    return (m & (1 << k)) !== 0;
+  }
+  
+  function* pairGenerator(n, t) {
+    const distance = 2 ** t;
+    for (let j = 0; j < 2 ** (n - t - 1); j++) {
+      for (let k0 = 2 * j * distance; k0 < (2 * j + 1) * distance; k0++) {
+        const k1 = k0 + distance;
+        yield [k0, k1];
+      }
+    }
+  }
+  
+  function processPair(state, gate, k0, k1) {
+    const x = state[k0];
+    const y = state[k1];
+    state[k0] = x * gate[0][0] + y * gate[0][1];
+    state[k1] = x * gate[1][0] + y * gate[1][1];
+  }
+  
+  function transform(state, t, gate) {
+    const n = Math.log2(state.length);
+    for (const [k0, k1] of pairGenerator(n, t)) {
+      processPair(state, gate, k0, k1);
+    }
+  }
+  
+  function cTransform(state, c, t, gate) {
+    const n = Math.log2(state.length);
+    for (const [k0, k1] of pairGenerator(n, t)) {
+      if (isBitSet(k0, c)) {
+        processPair(state, gate, k0, k1);
+      }
+    }
+  }
+  
+  function mcTransform(state, cs, t, gate) {
+    const n = Math.log2(state.length);
+    for (const [k0, k1] of pairGenerator(n, t)) {
+      if (cs.every((c) => isBitSet(k0, c))) {
+        processPair(state, gate, k0, k1);
+      }
+    }
+  }
+  
+  function measure(state, shots) {
+    const probabilities = state.map((amp) => Math.abs(amp) ** 2);
+    const samples = math.pickRandom(state.map((_, i) => i), probabilities, shots);
+    const counts = {};
+    samples.forEach((sample) => {
+      counts[sample] = (counts[sample] || 0) + 1;
+    });
+    return counts;
+  }
+  </code>
+  </pre>
 
   <div id="tutorial"></div>
 
