@@ -338,7 +338,7 @@ export class QuantumGateSimulator extends LitElement {
         </thead>
         <tbody>
           ${state.map(({ outcome, amplitude }) => {
-            const magnitude = math.abs(amplitude).toFixed(4);
+            const magnitude = math.abs(amplitude).toFixed(3);
             const direction = ((math.arg(amplitude) * 180) / Math.PI).toFixed(1);
             const rgb = complex_to_rgb(amplitude, true);
 
@@ -347,7 +347,10 @@ export class QuantumGateSimulator extends LitElement {
                 <td>${outcome}</td>
                 <td>${outcome.toString(2)}</td>
                 <td>
-                  ${math.format(amplitude, { notation: 'fixed', precision: 4 })}
+                  ${math.format(amplitude, {
+                    notation: 'fixed',
+                    precision: 3,
+                  })}
                 </td>
                 <td>${direction}°</td>
                 <td>${magnitude}</td>

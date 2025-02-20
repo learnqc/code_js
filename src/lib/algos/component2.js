@@ -331,7 +331,7 @@ export class QuantumStateViewer extends LitElement {
         </thead>
         <tbody>
           ${state.map((amplitude, index) => {
-            const magnitude = math.abs(amplitude).toFixed(4);
+            const magnitude = math.abs(amplitude).toFixed(3);
             const direction = ((math.arg(amplitude) * 180) / Math.PI).toFixed(1);
             const rgb = complex_to_rgb(amplitude, true);
             const isHighlighted = highlightIndices.includes(index);
@@ -341,10 +341,12 @@ export class QuantumStateViewer extends LitElement {
                 <td>
                   ${index.toString(2).padStart(Math.log2(state.length), '0')}
                 </td>
-                <td>${math.format(amplitude, {
-                  notation: 'fixed',
-                  precision: 4,
-                })}</td>
+                <td>
+                  ${math.format(amplitude, {
+                    notation: 'fixed',
+                    precision: 3,
+                  })}
+                </td>
                 <td>${direction}°</td>
                 <td>${magnitude}</td>
                 <td>
@@ -437,11 +439,11 @@ export class QuantumStateViewer extends LitElement {
           <!-- Apply gate button(s) -->
           <button
             @click="${isDynamic ? this.applyDynamicGate : this.applyStaticGate}"
+            ?disabled="${isDynamic && this.stepIndex < this.dynamicSteps.length}"
           >
             Apply Gate
           </button>
 
-          <!-- Only show 'Next Step' button in dynamic mode -->
           ${isDynamic
             ? html`
                 <button
