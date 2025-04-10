@@ -73,12 +73,13 @@ export class QuantumGateSimulator extends LitElement {
     .color-wheels {
       display: flex;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 50px;
       margin-top: 20px;
       justify-content: center;
     }
     .wheel-container {
       text-align: center;
+      margin: 20px;
     }
     .wheel-title {
       margin: 5px 0;
@@ -93,22 +94,22 @@ export class QuantumGateSimulator extends LitElement {
       height: 150px;
     }
     /* The conic gradient color wheel */
-    .color-wheel {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: conic-gradient(
-        from -30deg,
-        lime,
-        yellow,
-        orange,
-        red,
-        magenta,
-        blue,
-        cyan,
-        lime
-      );
-    }
+.color-wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from -30deg,
+    rgba(0, 255, 0, 0.7),
+    rgba(255, 255, 0, 0.7),
+    rgba(255, 165, 0, 0.7),
+    rgba(255, 0, 0, 0.7),
+    rgba(255, 0, 255, 0.7),
+    rgba(0, 0, 255, 0.7),
+    rgba(0, 255, 255, 0.7),
+    rgba(0, 255, 0, 0.7)
+  );
+}
     /* SVG overlay for the arrow line */
     .arrow-overlay {
       position: absolute;
@@ -135,6 +136,14 @@ export class QuantumGateSimulator extends LitElement {
       .theta-container {
         text-align: center;
       }
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+      font-size: 1rem;
     }
   `;
 
@@ -282,41 +291,38 @@ export class QuantumGateSimulator extends LitElement {
    * and magnitude (length).
    */
   renderColorWheel(amplitude0, amplitude1) {
-    const cx = 75, cy = 75, radius = 75; // center and radius of the circle
+    const cx = 75, cy = 75, radius = 75; // Center and radius of the circle
 
-    // New getArrow: directly use the complex number coordinates
     const getArrow = (amplitude) => {
       const x2 = cx + math.re(amplitude) * radius;
       const y2 = cy - math.im(amplitude) * radius;
-      // Compute angle for text offset based on the vector (x2-cx, y2-cy)
-      const angle = Math.atan2(y2 - cy, x2 - cx);
-      return { x2, y2, angle };
+      return { x2, y2 };
     };
 
-    const offset = 20; // offset for positioning text slightly beyond the arrow end
     const arrow0 = getArrow(amplitude0);
     const arrow1 = getArrow(amplitude1);
 
-    // Compute text positions along the arrow direction
-    const text0X = arrow0.x2 + offset * Math.cos(arrow0.angle);
-    const text0Y = arrow0.y2 + offset * Math.sin(arrow0.angle);
-    const text1X = arrow1.x2 + offset * Math.cos(arrow1.angle);
-    const text1Y = arrow1.y2 + offset * Math.sin(arrow1.angle);
-
     return html`
       <div class="color-wheel-container">
-        <!-- Conic gradient background (remains unchanged) -->
         <div class="color-wheel"></div>
-    
-        <!-- Arrow overlay -->
         <svg class="arrow-overlay" width="150" height="150" viewBox="0 0 150 150" style="overflow: visible;">
           <!-- Arrow for Outcome 0 -->
-          <line x1="${cx}" y1="${cy}" x2="${arrow0.x2}" y2="${arrow0.y2}" stroke="black" stroke-width="3"/>
-          <text x="${text0X}" y="${text0Y}" text-anchor="middle" font-size="20" fill="black" font-weight="bold">0</text>
-    
-          <!-- Arrow for Outcome 1 -->
-          <line x1="${cx}" y1="${cy}" x2="${arrow1.x2}" y2="${arrow1.y2}" stroke="black" stroke-width="3"/>
-          <text x="${text1X}" y="${text1Y}" text-anchor="middle" font-size="20" fill="black" font-weight="bold">1</text>
+          <defs>
+            <marker id="arrow-white-outline" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="white" />
+            </marker>
+            <marker id="arrow-black" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="black" />
+            </marker>
+          </defs>
+          <line
+            x1="${cx}" y1="${cy}" x2="${arrow0.x2}" y2="${arrow0.y2}"
+            stroke="white" stroke-width="3" marker-end="url(#arrow-white-outline)"
+          />
+          <line
+            x1="${cx}" y1="${cy}" x2="${arrow1.x2}" y2="${arrow1.y2}"
+            stroke="black" stroke-width="3" marker-end="url(#arrow-black)"
+          />
         </svg>
       </div>
     `;
@@ -426,6 +432,10 @@ export class QuantumGateSimulator extends LitElement {
                 </div>
               `
             : ''}
+        </div>
+        <div class="legend">
+          <div><span style="color: white; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; font-weight: bold;">●</span> Outcome 0</div>
+          <div><span style="color: black; font-weight: bold;">●</span> Outcome 1</div>
         </div>
       </div>
     `;
