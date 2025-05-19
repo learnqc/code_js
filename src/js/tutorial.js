@@ -248,6 +248,9 @@ function runCode(editor, outputContainer) {
             .join(' ');
         outputContainer.innerText += message + '\n'; // Append to the output container
         originalConsoleLog.apply(console, args); // Call the original console.log
+        // Auto-resize output
+        outputContainer.style.height = 'auto';
+        outputContainer.style.height = outputContainer.scrollHeight + 'px';
     };
 
     try {
@@ -265,6 +268,9 @@ function runCode(editor, outputContainer) {
     } finally {
         // Restore original console.log
         console.log = originalConsoleLog;
+        // Auto-resize output after all output is set
+        outputContainer.style.height = 'auto';
+        outputContainer.style.height = outputContainer.scrollHeight + 'px';
     }
 
     // Save the current code for the next step
@@ -279,7 +285,8 @@ function runCode(editor, outputContainer) {
     // Step 1: Define a quantum state using complex numbers
     displayStepAndEditor(
       ``,
-`function testSimulator() {
+`function testSimulator() 
+{
   const state = initState(3);
   transform(state, 0, h);
   transform(state, 1, h);
@@ -287,25 +294,10 @@ function runCode(editor, outputContainer) {
   const samples = measure(state, 1000);
   console.log(state);
   console.log(samples);
-
-  (async () => {
-
-    await state_table_to_html(state, "table"); 
-    
-  })();
-
 }
 
 testSimulator();`
     );
-
-let table = document.createElement("div");
-table.id = "table";
-table.style.display = "flex";
-table.style.justifyContent = "center";
-table.style.alignItems = "center";
-document.getElementById("tutorial").appendChild(table);
-
 
   });
   

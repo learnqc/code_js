@@ -292,37 +292,41 @@ export class QuantumGateSimulator extends LitElement {
    */
   renderColorWheel(amplitude0, amplitude1) {
     const cx = 75, cy = 75, radius = 75; // Center and radius of the circle
+    const labelOffset = 18; // Offset for label from line end
 
-    const getArrow = (amplitude) => {
+    const getLine = (amplitude) => {
       const x2 = cx + math.re(amplitude) * radius;
       const y2 = cy - math.im(amplitude) * radius;
-      return { x2, y2 };
+      // Compute direction vector for offset
+      const dx = x2 - cx;
+      const dy = y2 - cy;
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      // Offset label further out in the same direction
+      const lx = x2 + (dx / len) * labelOffset;
+      const ly = y2 + (dy / len) * labelOffset;
+      return { x2, y2, lx, ly };
     };
 
-    const arrow0 = getArrow(amplitude0);
-    const arrow1 = getArrow(amplitude1);
+    const line0 = getLine(amplitude0);
+    const line1 = getLine(amplitude1);
 
     return html`
       <div class="color-wheel-container">
         <div class="color-wheel"></div>
         <svg class="arrow-overlay" width="150" height="150" viewBox="0 0 150 150" style="overflow: visible;">
-          <!-- Arrow for Outcome 0 -->
-          <defs>
-            <marker id="arrow-white-outline" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-              <path d="M0,0 L6,3 L0,6 Z" fill="white" />
-            </marker>
-            <marker id="arrow-black" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-              <path d="M0,0 L6,3 L0,6 Z" fill="black" />
-            </marker>
-          </defs>
+          <!-- Line for Outcome 0 -->
           <line
-            x1="${cx}" y1="${cy}" x2="${arrow0.x2}" y2="${arrow0.y2}"
-            stroke="white" stroke-width="3" marker-end="url(#arrow-white-outline)"
+            x1="${cx}" y1="${cy}" x2="${line0.x2}" y2="${line0.y2}"
+            stroke="black" stroke-width="2.5"
           />
+          <!-- Line for Outcome 1 -->
           <line
-            x1="${cx}" y1="${cy}" x2="${arrow1.x2}" y2="${arrow1.y2}"
-            stroke="black" stroke-width="3" marker-end="url(#arrow-black)"
+            x1="${cx}" y1="${cy}" x2="${line1.x2}" y2="${line1.y2}"
+            stroke="black" stroke-width="2.5"
           />
+          <!-- Labels for the lines, offset from the line ends -->
+          <text x="${line0.lx}" y="${line0.ly}" fill="black" font-size="15" alignment-baseline="middle" text-anchor="middle">0</text>
+          <text x="${line1.lx}" y="${line1.ly}" fill="black" font-size="15" alignment-baseline="middle" text-anchor="middle">1</text>
         </svg>
       </div>
     `;
@@ -386,11 +390,11 @@ export class QuantumGateSimulator extends LitElement {
           <button @click="${this.applyGate}" ?disabled="${this.gateApplied}">
             Apply ${this.gate} Gate
           </button>
-          <button @click="${this.randomizeState}">
-            Randomize
-          </button>
           <button @click="${this.initializeState}">
             Reset
+          </button>
+          <button @click="${this.randomizeState}">
+            Randomize
           </button>
         </div>
 
@@ -423,6 +427,19 @@ export class QuantumGateSimulator extends LitElement {
             ${this.renderColorWheel(this.originalState[0].amplitude, this.originalState[1].amplitude)}
           </div>
 
+          <!-- Arrow and label between wheels, only if gate applied -->
+          ${this.gateApplied ? html`
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 80px;">
+              <svg width="60" height="40" style="margin-bottom: 0; margin-top: 20px;">
+                <!-- Draw the line up to the base of the arrowhead -->
+                <line x1="8" y1="20" x2="42" y2="20" stroke="black" stroke-width="2.5" />
+                <!-- Draw the arrowhead as a polygon at the end of the line -->
+                <polygon points="48,20 42,16 42,24" fill="black" />
+              </svg>
+              <div style="font-size: 1.3em; font-weight: bold; margin-top: 0;">${this.gate}</div>
+            </div>
+          ` : ''}
+
           <!-- (Conditional) After State Wheels -->
           ${this.gateApplied
             ? html`
@@ -432,10 +449,6 @@ export class QuantumGateSimulator extends LitElement {
                 </div>
               `
             : ''}
-        </div>
-        <div class="legend">
-          <div><span style="color: white; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; font-weight: bold;">●</span> Outcome 0</div>
-          <div><span style="color: black; font-weight: bold;">●</span> Outcome 1</div>
         </div>
       </div>
     `;

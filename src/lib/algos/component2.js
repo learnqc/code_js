@@ -202,6 +202,8 @@ export class QuantumStateViewer extends LitElement {
 
     // Visualization mode
     mode: { type: String },
+
+    num_qubits: { type: Number },
   };
 
   constructor() {
@@ -218,27 +220,39 @@ export class QuantumStateViewer extends LitElement {
     this.stepIndex = 0;
     this.theta = Math.PI / 4;
     this.mode = 'dynamic';
+    this.num_qubits = 3;
     this.initializeState();
   }
 
   initializeState() {
-    const size = 8; // Example: 3 qubits => 2^3 = 8 states
-    this.state = Array.from({ length: size }, () =>
-      math.complex(Math.random() - 0.5, Math.random() - 0.5)
+    const size = Math.pow(2, this.num_qubits);
+    this.state = Array.from({ length: size }, (_, i) =>
+      i === 0 ? math.complex(1, 0) : math.complex(0, 0)
     );
-
-    // Normalize
-    const norm = math.sqrt(
-      this.state.reduce((acc, val) => math.add(acc, math.pow(math.abs(val), 2)), 0)
-    );
-    this.state = this.state.map((amp) => math.divide(amp, norm));
-
-    // Reset stored steps for visualization
     this.intermediateStates = [this.state.slice()];
     this.processedPairs = [[]];
     this.processingPair = [];
     this.dynamicSteps = [];
     this.stepIndex = 0;
+    this.requestUpdate();
+  }
+
+  randomizeState() {
+    const size = this.state.length;
+    this.state = Array.from({ length: size }, () =>
+      math.complex(Math.random() - 0.5, Math.random() - 0.5)
+    );
+    // Normalize
+    const norm = math.sqrt(
+      this.state.reduce((acc, val) => math.add(acc, math.pow(math.abs(val), 2)), 0)
+    );
+    this.state = this.state.map((amp) => math.divide(amp, norm));
+    this.intermediateStates = [this.state.slice()];
+    this.processedPairs = [[]];
+    this.processingPair = [];
+    this.dynamicSteps = [];
+    this.stepIndex = 0;
+    this.requestUpdate();
   }
 
   // ----------------------------
@@ -367,113 +381,92 @@ export class QuantumStateViewer extends LitElement {
   }
 
   render() {
-    // In dynamic mode, show only the latest state
-    // In static mode, show each intermediate state in a sequence
-    const isDynamic = this.mode === 'dynamic';
-    const currentState = isDynamic
-      ? this.intermediateStates[this.intermediateStates.length - 1]
-      : null;
+    // Always use dynamic mode
+    const currentState = this.intermediateStates[this.intermediateStates.length - 1];
+    const gateRequiresTarget = ['X', 'Y', 'Z', 'H', 'CX', 'CY', 'CZ', 'RX', 'RY', 'RZ', 'Phase'].includes(this.gate);
+    const gateRequiresControl = ['CX', 'CY', 'CZ'].includes(this.gate);
+    const gateRequiresAngle = ['Phase', 'RZ', 'RX', 'RY'].includes(this.gate);
 
     return html`
       <div>
         <h3>Quantum State Visualizer</h3>
 
-        <!-- Render tables -->
-        <div>
-          ${isDynamic
-            ? this.renderTable(currentState, `Current State`, this.processingPair)
-            : this.intermediateStates.map((state, idx) =>
-                this.renderTable(
-                  state,
-                  `Step ${idx + 1}`,
-                  this.processedPairs[idx] || []
-                )
-              )}
-        </div>
-
-        <!-- Controls -->
-        <div class="buttons">
-          <label>
-            Mode:
-            <select @change="${(e) => (this.mode = e.target.value)}">
-              <option value="dynamic" ?selected="${this.mode === 'dynamic'}">Dynamic</option>
-              <option value="static" ?selected="${this.mode === 'static'}">Static</option>
-            </select>
-          </label>
-
+        <!-- Controls at the top: first row -->
+        <div class="buttons" style="margin-bottom: 0;">
           <label>
             Gate:
             <select @change="${(e) => (this.gate = e.target.value)}">
-              ${Object.keys(gates).map(
-                (key) => html`<option value="${key}">${key}</option>`
-              )}
+              <option value="X" ?selected="${this.gate === 'X'}">X</option>
+              <option value="Y" ?selected="${this.gate === 'Y'}">Y</option>
+              <option value="Z" ?selected="${this.gate === 'Z'}">Z</option>
+              <option value="H" ?selected="${this.gate === 'H'}">H</option>
+              <option value="CX" ?selected="${this.gate === 'CX'}">CX</option>
+              <option value="CY" ?selected="${this.gate === 'CY'}">CY</option>
+              <option value="CZ" ?selected="${this.gate === 'CZ'}">CZ</option>
+              <option value="Phase" ?selected="${this.gate === 'Phase'}">Phase</option>
+              <option value="RX" ?selected="${this.gate === 'RX'}">RX</option>
+              <option value="RY" ?selected="${this.gate === 'RY'}">RY</option>
+              <option value="RZ" ?selected="${this.gate === 'RZ'}">RZ</option>
             </select>
           </label>
 
-          ${this.controlled
-            ? html`
-                <label>
-                  Control Qubit:
-                  <input
-                    type="number"
-                    min="0"
-                    max="${Math.log2(this.state.length) - 1}"
-                    .value="${this.controlQubit}"
-                    @input="${(e) => (this.controlQubit = Number(e.target.value))}"
-                  />
-                </label>
-              `
-            : ''}
+          ${gateRequiresTarget ? html`
+            <label>
+              Target Qubit:
+              <input
+                type="number"
+                min="0"
+                max="${Math.log2(this.state.length) - 1}"
+                .value="${this.targetQubit}"
+                @input="${(e) => (this.targetQubit = Number(e.target.value))}"
+              />
+            </label>
+          ` : ''}
 
-          <label>
-            Target Qubit:
-            <input
-              type="number"
-              min="0"
-              max="${Math.log2(this.state.length) - 1}"
-              .value="${this.targetQubit}"
-              @input="${(e) => (this.targetQubit = Number(e.target.value))}"
-            />
-          </label>
+          ${gateRequiresControl ? html`
+            <label>
+              Control Qubit:
+              <input
+                type="number"
+                min="0"
+                max="${Math.log2(this.state.length) - 1}"
+                .value="${this.controlQubit}"
+                @input="${(e) => (this.controlQubit = Number(e.target.value))}"
+              />
+            </label>
+          ` : ''}
 
-          <!-- Apply gate button(s) -->
-          <button
-            @click="${isDynamic ? this.applyDynamicGate : this.applyStaticGate}"
-            ?disabled="${isDynamic && this.stepIndex < this.dynamicSteps.length}"
-          >
-            Apply Gate
-          </button>
-
-          ${isDynamic
-            ? html`
-                <button
-                  @click="${this.nextStep}"
-                  ?disabled="${this.stepIndex >= this.dynamicSteps.length}"
-                >
-                  Next Step
-                </button>
-              `
-            : ''}
-
-          <button @click="${this.initializeState}">Reset</button>
+          ${gateRequiresAngle ? html`
+            <label>
+              θ (radians):
+              <input
+                type="number"
+                step="0.1"
+                .value="${this.theta}"
+                @input="${(e) => (this.theta = Number(e.target.value))}"
+              />
+            </label>
+          ` : ''}
         </div>
 
-        <!-- Theta input for gates that require an angle -->
-        ${['Phase', 'RZ', 'RX', 'RY'].includes(this.gate)
-          ? html`
-              <div class="theta-container">
-                <label>
-                  θ (radians):
-                  <input
-                    type="number"
-                    step="0.1"
-                    .value="${this.theta}"
-                    @input="${(e) => (this.theta = Number(e.target.value))}"
-                  />
-                </label>
-              </div>
-            `
-          : ''}
+        <!-- Second row: action buttons -->
+        <div style="height: 24px;"></div>
+        <div class="buttons" style="margin-top: 0; margin-bottom: 25px;">
+          <button @click="${this.applyDynamicGate}">Apply Gate</button>
+          <button
+            @click="${this.nextStep}"
+            ?disabled="${this.stepIndex >= this.dynamicSteps.length}"
+          >
+            Step
+          </button>
+          <button @click="${this.initializeState}" style="background-color: #eee; color: #333;">Reset</button>
+          <button @click="${this.randomizeState}" style="background-color: #eee; color: #333;">Randomize</button>
+        </div>
+
+        <!-- Render table -->
+        <div>
+          ${this.renderTable(currentState, `Current State`, this.processingPair)}
+        </div>
       </div>
     `;
   }
