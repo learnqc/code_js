@@ -133,7 +133,9 @@
       color: #444;
       font-family: monospace;
       overflow-y: auto;
-      height: 500px; /* Fixed height */
+      min-height: 40px;
+      max-height: 600px;
+      resize: vertical;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
@@ -517,13 +519,13 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   all amplitudes change in pairs according to a common formula. This is done through interference, where simultaneous changes to the numbers
   comprising a quantum state have to be balanced with the right types of changes. There are a few sources of useful natural interference,
   mostly present in the Phase Estimation and Amplitude Amplification algorithms. Since interference is hard, people try to find it using brute
-  force search (variational algorithms). This is similar to finding weights for a neural network, but much more complex, hence the “brute force” term.
+  force search (variational algorithms). This is similar to finding weights for a neural network, but much more complex, hence the "brute force" term.
 </p>
 <blockquote>
   <p>
     "The goal in devising an algorithm for a quantum computer is to choreograph a pattern of constructive and destructive interference so that for
     each wrong answer the contributions to its amplitude cancel each other out, whereas for the right answer the contributions reinforce each other.
-    If, and only if, you can arrange that, you’ll see the right answer with a large probability when you look."
+    If, and only if, you can arrange that, you'll see the right answer with a large probability when you look."
   </p>
   <p>
     -- Scott Aaronson, <em>What Makes Quantum Computing So Hard to Explain?</em> June 8, 2021,
@@ -551,7 +553,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 <h1>Conclusion</h1>
 <p>
   The concepts introduced in this document give enough information to define the implementation of a simple quantum simulator. We include such
-  a simple implementation in Appendix B, where we also include a simple test, and its equivalent in Qiskit, IBM’s quantum framework. The same
+  a simple implementation in Appendix B, where we also include a simple test, and its equivalent in Qiskit, IBM's quantum framework. The same
   concepts have been used both in a learning version of a simulator, called Hume:
   <a href="https://github.com/learnqc/code">https://github.com/learnqc/code</a>, and a high-performance simulator written in Rust, called Spinoza:
   <a href="https://github.com/QuState/spinoza">https://github.com/QuState/spinoza</a>.
@@ -572,7 +574,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 </div>
 
 <p>
-  We can see that the arc diagrams have an advantage over the butterfly diagrams used in the Fast Fourier Transform literature. The arcs don’t
+  We can see that the arc diagrams have an advantage over the butterfly diagrams used in the Fast Fourier Transform literature. The arcs don't
   intersect, and they can capture all members of a group nicely.
 </p>
 
