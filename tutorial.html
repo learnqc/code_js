@@ -133,9 +133,7 @@
       color: #444;
       font-family: monospace;
       overflow-y: auto;
-      min-height: 40px;
-      max-height: 600px;
-      resize: vertical;
+      height: 500px; /* Fixed height */
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
@@ -371,6 +369,12 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 <p>The X-gate, also called the NOT gate, swaps the amplitudes corresponding to a pair of outcomes.</p>
 <div id="X" class="app"></div>
 
+<p><b>How to use this app:</b> Select a gate, target qubit, and (if needed) a control qubit using the controls above the visualizer. Click 'Apply Gate' to set up the transformation. Use 'Step Forward' and 'Step Backward' to walk through the transformation process step by step, seeing how the quantum state changes. 'Reset' returns to the default state, and 'Randomize' creates a new random state. You can experiment with different gates and qubit choices to see their effects on the quantum state.</p>
+
+<p>Try with target qubits 0, 1, and 2: </p>
+
+<div id="quantum-viewer-container" class="app"></div>
+
 <p>Applying a Y-gate to a single-qubit state changes both the directions and swaps the probabilities, as shown in the diagram.</p>
 <div id="Y" class="app"></div>
 
@@ -424,9 +428,11 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 
 <p>As an example, let's look at a visualization of the effect of applying the X-gate on qubit 0 of a three-qubit system. The amplitudes in each pair are swapped. For other gates, a different formula is applied to recombine the amplitudes in each pair, but the pairing mechanism is the same.</p>
 
+<p><b>How to use this app:</b> Select a gate, target qubit, and (if needed) a control qubit using the controls above the visualizer. Click 'Apply Gate' to set up the transformation. Use 'Step Forward' and 'Step Backward' to walk through the transformation process step by step, seeing how the quantum state changes. 'Reset' returns to the default state, and 'Randomize' creates a new random state. You can experiment with different gates and qubit choices to see their effects on the quantum state.</p>
+
 <p>Try with target qubits 0, 1, and 2: </p>
 
-<div id="quantum-viewer-container" class="app"></div>
+<div id="quantum-viewer-container-1" class="app"></div>
 
 <h1>Controlled Transformations</h1>
 
