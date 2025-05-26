@@ -29,25 +29,30 @@ document.addEventListener('DOMContentLoaded', () => {
         container.appendChild(gateContainer);
     });
 
-    const viewerContainer = document.getElementById('quantum-viewer-container');
-
-    // Create an instance of the Quantum State Viewer
+    const viewerContainer = document.getElementById('quantum-viewer-container-1');
     const quantumViewer = document.createElement('quantum-state-viewer');
-  
-    // Set the initial properties (if needed)
-    quantumViewer.gate = 'X'; // Example: setting the X-gate
-  
-    // Append the Quantum State Viewer to the container
+    quantumViewer.gate = 'X';
+    quantumViewer.targetQubit = 0;
+    quantumViewer.controlled = false;
     viewerContainer.appendChild(quantumViewer);
+
+    quantumViewer.addEventListener('change', (e) => {
+      const gate = quantumViewer.gate;
+      quantumViewer.controlled = ['CX', 'CY', 'CZ'].includes(gate);
+    });
 
     const container2 = document.getElementById('quantum-viewer-container-2');
     const viewer2 = document.createElement('quantum-state-viewer');
-    viewer2.gate = 'X';
+    viewer2.gate = 'CX';
+    viewer2.controlQubit = 0;
+    viewer2.targetQubit = 1;
     viewer2.controlled = true;
-    viewer2.controlQubit = '1';
-    viewer2.targetQubit = '0';
-
     container2.appendChild(viewer2);
+
+    viewer2.addEventListener('change', (e) => {
+      const gate = viewer2.gate;
+      viewer2.controlled = ['CX', 'CY', 'CZ'].includes(gate);
+    });
 });
 
 
