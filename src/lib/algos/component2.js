@@ -216,6 +216,12 @@ export class QuantumStateViewer extends LitElement {
     mode: { type: String },
 
     num_qubits: { type: Number },
+
+    // Flag to indicate that processing has begun (first pair already highlighted)
+    processingStarted: { type: Boolean },
+
+    // New transformation-related properties
+    transformationActive: { type: Boolean },
   };
 
   constructor() {
@@ -233,6 +239,8 @@ export class QuantumStateViewer extends LitElement {
     this.theta = Math.PI / 4;
     this.mode = 'dynamic';
     this.num_qubits = 3;
+    this.processingStarted = false;
+    this.transformationActive = false;
     this.initializeState();
   }
 
@@ -244,6 +252,7 @@ export class QuantumStateViewer extends LitElement {
     this.intermediateStates = [this.state.slice()];
     this.processedPairs = [[]];
     this.processingPair = [];
+    this.processingStarted = false;
     this.dynamicSteps = [];
     this.stepIndex = 0;
     this.requestUpdate();
@@ -262,33 +271,35 @@ export class QuantumStateViewer extends LitElement {
     this.intermediateStates = [this.state.slice()];
     this.processedPairs = [[]];
     this.processingPair = [];
+    this.processingStarted = false;
     this.dynamicSteps = [];
     this.stepIndex = 0;
     this.requestUpdate();
   }
 
-  // ----------------------------
-  // DYNAMIC MODE (step-by-step)
-  // ----------------------------
-  // Helper to prepare the list of dynamic steps if we have not done so yet
-  ensureDynamicSteps() {
-    if (this.dynamicSteps.length === 0 || this.stepIndex >= this.dynamicSteps.length) {
-      this.applyDynamicGate();
-    }
+  // Begin a new transformation: compute pairs, highlight first one, lock controls
+  startTransformation() {
+    // Prepare the pairs to be processed
+    this.transformationActive = true;
+    this.processingStarted = false;
+    this.applyDynamicGate(); // computes dynamicSteps & highlights first pair
   }
 
-  // Skip processing – run through all remaining steps automatically
+  // Skip processing – run through all remaining pairs automatically
   skip() {
-    // Make sure we have steps prepared
-    this.ensureDynamicSteps();
+    if (!this.transformationActive) return; // nothing to do
 
-    // Iterate through all remaining steps
-    while (this.stepIndex < this.dynamicSteps.length) {
-      // nextStep will call requestUpdate internally
-      this.nextStep();
+    // Ensure we process from the current pointer onward
+    if (!this.processingStarted) {
+      this.processingStarted = true; // consider first pair as already highlighted, now process it
     }
-    // After finishing, make sure the UI updates once more (in case no steps were processed)
-    this.requestUpdate();
+
+    while (this.stepIndex < this.dynamicSteps.length) {
+      this.processCurrentPair();
+    }
+
+    // Finish transformation
+    this.finishTransformation();
   }
 
   applyDynamicGate() {
@@ -320,68 +331,57 @@ export class QuantumStateViewer extends LitElement {
 
     // Set the first pair to highlight (if any)
     this.processingPair = this.dynamicSteps.length > 0 ? this.dynamicSteps[0] : [];
+    this.processingStarted = false;
     this.requestUpdate();
   }
 
-  nextStep() {
-    // If we have not started yet, prepare the gate application
-    this.ensureDynamicSteps();
-
-    // Process the next pair in the list
+  processCurrentPair() {
+    // Process the pair at current stepIndex
     if (this.stepIndex >= this.dynamicSteps.length) return;
 
     const [k0, k1] = this.dynamicSteps[this.stepIndex];
     process_pair(this.state, this.gateMatrix, k0, k1);
 
-    // Keep track of intermediate states and which pair was processed
+    // Track state and processed pair
     this.intermediateStates.push(this.state.slice());
     this.processedPairs.push([k0, k1]);
 
     this.stepIndex++;
 
-    // Highlight the next pair if there is one
+    // Update highlighted pair
     this.processingPair =
       this.stepIndex < this.dynamicSteps.length ? this.dynamicSteps[this.stepIndex] : [];
-
-    this.requestUpdate();
   }
 
-  prevStep() {
-    if (this.stepIndex <= 0) return;
-    this.stepIndex--;
-    this.state = this.intermediateStates[this.stepIndex].slice();
-    this.processingPair = this.dynamicSteps[this.stepIndex] || [];
-    this.requestUpdate();
+  nextStep() {
+    if (!this.transformationActive) return;
+
+    // If processing hasn't started yet, process the first pair
+    if (!this.processingStarted) {
+      this.processingStarted = true;
+      this.processCurrentPair();
+      this.requestUpdate();
+      return;
+    }
+
+    // Process one pair
+    this.processCurrentPair();
+
+    // If done, finish transformation
+    if (this.stepIndex >= this.dynamicSteps.length) {
+      this.finishTransformation();
+    } else {
+      this.requestUpdate();
+    }
   }
 
-  // -------------------------
-  // STATIC MODE (all at once)
-  // -------------------------
-  // applyStaticGate() {
-  //   const n = Math.log2(this.state.length);
-
-  //   this.gateMatrix =
-  //     typeof gates[this.gate] === 'function'
-  //       ? gates[this.gate](this.theta)
-  //       : gates[this.gate];
-
-  //   // If controlled, only process pairs whose k0 has control-bit set
-  //   if (this.controlled) {
-  //     if (this.controlQubit === this.targetQubit) {
-  //       console.error("Control qubit cannot be the same as the target qubit.");
-  //       return;
-  //     }
-  //     c_transform(this.state, this.controlQubit, this.targetQubit, this.gateMatrix);
-  //   } else {
-  //     for (const [k0, k1] of pair_generator(n, this.targetQubit)) {
-  //       process_pair(this.state, this.gateMatrix, k0, k1);
-  //       // For illustration, store each step (optional if you don't need every step)
-  //       this.intermediateStates.push(this.state.slice());
-  //       this.processedPairs.push([k0, k1]);
-  //     }
-  //   }
-  //   this.requestUpdate();
-  // }
+  finishTransformation() {
+    this.transformationActive = false;
+    this.processingStarted = false;
+    // Keep final state & highlight cleared
+    this.processingPair = [];
+    this.requestUpdate();
+  }
 
   renderTable(state, title, highlightIndices = []) {
     return html`
@@ -444,7 +444,7 @@ export class QuantumStateViewer extends LitElement {
     // Log the target qubit value when it changes
     console.log('Target Qubit:', this.targetQubit);
 
-    const controlsLocked = this.stepIndex > 0 && this.stepIndex < this.dynamicSteps.length;
+    const controlsLocked = this.transformationActive;
 
     return html`
       <div>
@@ -454,7 +454,7 @@ export class QuantumStateViewer extends LitElement {
         <div class="buttons" style="margin-bottom: 0;">
           <label>
             Gate:
-            <select @change="${(e) => { this.gate = e.target.value; this.dynamicSteps = []; this.stepIndex = 0; }}" ?disabled="${controlsLocked}">
+            <select @change="${(e) => { this.gate = e.target.value; this.dynamicSteps = []; this.stepIndex = 0; this.processingStarted = false; }}" ?disabled="${controlsLocked}">
               <option value="X" ?selected="${this.gate === 'X'}">X</option>
               <option value="Y" ?selected="${this.gate === 'Y'}">Y</option>
               <option value="Z" ?selected="${this.gate === 'Z'}">Z</option>
@@ -477,7 +477,7 @@ export class QuantumStateViewer extends LitElement {
                 min="0"
                 max="${Math.log2(this.state.length) - 1}"
                 .value="${this.targetQubit}"
-                @input="${(e) => { this.targetQubit = Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; }}"
+                @input="${(e) => { this.targetQubit = Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; this.processingStarted = false; }}"
                 ?disabled="${controlsLocked}"
               />
             </label>
@@ -491,7 +491,7 @@ export class QuantumStateViewer extends LitElement {
                 min="0"
                 max="${Math.log2(this.state.length) - 1}"
                 .value="${this.controlQubit}"
-                @input="${(e) => { this.controlQubit = Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; }}"
+                @input="${(e) => { this.controlQubit = Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; this.processingStarted = false; }}"
                 ?disabled="${controlsLocked}"
               />
             </label>
@@ -504,8 +504,9 @@ export class QuantumStateViewer extends LitElement {
                 type="number"
                 step="0.1"
                 .value="${this.theta}"
-                @input="${(e) => { this.theta = Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; }}"
+                @input="${(e) => { this.theta = Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; this.processingStarted = false; }}"
                 ?disabled="${controlsLocked}"
+                style="width: 60px;"
               />
             </label>
           ` : ''}
@@ -514,21 +515,22 @@ export class QuantumStateViewer extends LitElement {
         <!-- Second row: action buttons -->
         <div style="height: 24px;"></div>
         <div class="buttons" style="margin-top: 0; margin-bottom: 25px;">
-          <button @click="${this.skip}">Skip</button>
-          <button
-            @click="${this.prevStep}"
-            ?disabled="${this.stepIndex <= 0}"
-          >
-            Step Backward
-          </button>
-          <button
-            @click="${this.nextStep}"
-            ?disabled="${this.dynamicSteps.length > 0 && this.stepIndex >= this.dynamicSteps.length}"
-          >
-            Step Forward
-          </button>
-          <button @click="${this.initializeState}" style="background-color: #eee; color: #333;">Reset</button>
-          <button @click="${this.randomizeState}" style="background-color: #eee; color: #333;">Randomize</button>
+          ${this.transformationActive ? html`
+            <button
+              @click="${this.nextStep}"
+              ?disabled="${this.dynamicSteps.length > 0 && this.stepIndex >= this.dynamicSteps.length}"
+            >
+              Process Next (Highlighted) Pair
+            </button>
+            <button @click="${this.skip}">
+              Process All (Remaining) Pairs
+            </button>
+          ` : html`
+            <button @click="${this.startTransformation}">Start Transformation</button>
+          `}
+
+          <button @click="${this.initializeState}">Reset</button>
+          <button @click="${this.randomizeState}">Randomize</button>
         </div>
 
         <!-- Render table -->
