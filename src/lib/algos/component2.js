@@ -270,6 +270,27 @@ export class QuantumStateViewer extends LitElement {
   // ----------------------------
   // DYNAMIC MODE (step-by-step)
   // ----------------------------
+  // Helper to prepare the list of dynamic steps if we have not done so yet
+  ensureDynamicSteps() {
+    if (this.dynamicSteps.length === 0 || this.stepIndex >= this.dynamicSteps.length) {
+      this.applyDynamicGate();
+    }
+  }
+
+  // Skip processing – run through all remaining steps automatically
+  skip() {
+    // Make sure we have steps prepared
+    this.ensureDynamicSteps();
+
+    // Iterate through all remaining steps
+    while (this.stepIndex < this.dynamicSteps.length) {
+      // nextStep will call requestUpdate internally
+      this.nextStep();
+    }
+    // After finishing, make sure the UI updates once more (in case no steps were processed)
+    this.requestUpdate();
+  }
+
   applyDynamicGate() {
     this.controlled = ['CX', 'CY', 'CZ'].includes(this.gate);
     if (this.controlled && this.controlQubit === this.targetQubit) {
@@ -303,6 +324,9 @@ export class QuantumStateViewer extends LitElement {
   }
 
   nextStep() {
+    // If we have not started yet, prepare the gate application
+    this.ensureDynamicSteps();
+
     // Process the next pair in the list
     if (this.stepIndex >= this.dynamicSteps.length) return;
 
@@ -420,6 +444,8 @@ export class QuantumStateViewer extends LitElement {
     // Log the target qubit value when it changes
     console.log('Target Qubit:', this.targetQubit);
 
+    const controlsLocked = this.stepIndex > 0 && this.stepIndex < this.dynamicSteps.length;
+
     return html`
       <div>
         <h3>Quantum State Visualizer</h3>
@@ -428,7 +454,7 @@ export class QuantumStateViewer extends LitElement {
         <div class="buttons" style="margin-bottom: 0;">
           <label>
             Gate:
-            <select @change="${(e) => (this.gate = e.target.value)}">
+            <select @change="${(e) => { this.gate = e.target.value; this.dynamicSteps = []; this.stepIndex = 0; }}" ?disabled="${controlsLocked}">
               <option value="X" ?selected="${this.gate === 'X'}">X</option>
               <option value="Y" ?selected="${this.gate === 'Y'}">Y</option>
               <option value="Z" ?selected="${this.gate === 'Z'}">Z</option>
@@ -451,7 +477,8 @@ export class QuantumStateViewer extends LitElement {
                 min="0"
                 max="${Math.log2(this.state.length) - 1}"
                 .value="${this.targetQubit}"
-                @input="${(e) => (this.targetQubit = Number(e.target.value))}"
+                @input="${(e) => { this.targetQubit = Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; }}"
+                ?disabled="${controlsLocked}"
               />
             </label>
           ` : ''}
@@ -464,7 +491,8 @@ export class QuantumStateViewer extends LitElement {
                 min="0"
                 max="${Math.log2(this.state.length) - 1}"
                 .value="${this.controlQubit}"
-                @input="${(e) => (this.controlQubit = Number(e.target.value))}"
+                @input="${(e) => { this.controlQubit = Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; }}"
+                ?disabled="${controlsLocked}"
               />
             </label>
           ` : ''}
@@ -476,7 +504,8 @@ export class QuantumStateViewer extends LitElement {
                 type="number"
                 step="0.1"
                 .value="${this.theta}"
-                @input="${(e) => (this.theta = Number(e.target.value))}"
+                @input="${(e) => { this.theta = Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; }}"
+                ?disabled="${controlsLocked}"
               />
             </label>
           ` : ''}
@@ -485,7 +514,7 @@ export class QuantumStateViewer extends LitElement {
         <!-- Second row: action buttons -->
         <div style="height: 24px;"></div>
         <div class="buttons" style="margin-top: 0; margin-bottom: 25px;">
-          <button @click="${this.applyDynamicGate}">Apply Gate</button>
+          <button @click="${this.skip}">Skip</button>
           <button
             @click="${this.prevStep}"
             ?disabled="${this.stepIndex <= 0}"
@@ -494,7 +523,7 @@ export class QuantumStateViewer extends LitElement {
           </button>
           <button
             @click="${this.nextStep}"
-            ?disabled="${this.stepIndex >= this.dynamicSteps.length}"
+            ?disabled="${this.dynamicSteps.length > 0 && this.stepIndex >= this.dynamicSteps.length}"
           >
             Step Forward
           </button>
