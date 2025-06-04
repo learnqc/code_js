@@ -369,7 +369,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 <p>The X-gate, also called the NOT gate, swaps the amplitudes corresponding to a pair of outcomes.</p>
 <div id="X" class="app"></div>
 
-<p><b>How to use this app:</b> Select a gate, target qubit, and (if needed) a control qubit using the controls above the visualizer. Click 'Apply Gate' to set up the transformation. Use 'Step Forward' and 'Step Backward' to walk through the transformation process step by step, seeing how the quantum state changes. 'Reset' returns to the default state, and 'Randomize' creates a new random state. You can experiment with different gates and qubit choices to see their effects on the quantum state.</p>
+<p><b>How to use this app:</b> Select a gate, target qubit, and (if needed) a control qubit using the controls above the visualizer. Click 'Start Transformation' to begin the process - this will highlight the first pair of amplitudes that will be transformed. The pairs represent outcomes whose binary representations differ only in the target qubit position. For controlled gates, only pairs where the control qubit is 1 will be processed. Use 'Process Next Pair' to transform one pair at a time, or 'Process All Pairs' to complete the transformation at once. 'Reset' returns to the default state, and 'Randomize' creates a new random state. You can experiment with different gates and qubit choices to see their effects on the quantum state.</p>
 
 <p>Try with target qubits 0, 1, and 2: </p>
 
@@ -428,7 +428,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 
 <p>As an example, let's look at a visualization of the effect of applying the X-gate on qubit 0 of a three-qubit system. The amplitudes in each pair are swapped. For other gates, a different formula is applied to recombine the amplitudes in each pair, but the pairing mechanism is the same.</p>
 
-<p><b>How to use this app:</b> Select a gate, target qubit, and (if needed) a control qubit using the controls above the visualizer. Click 'Apply Gate' to set up the transformation. Use 'Step Forward' and 'Step Backward' to walk through the transformation process step by step, seeing how the quantum state changes. 'Reset' returns to the default state, and 'Randomize' creates a new random state. You can experiment with different gates and qubit choices to see their effects on the quantum state.</p>
+<p><b>How to use this app:</b> Select a gate, target qubit, and (if needed) a control qubit using the controls above the visualizer. Click 'Start Transformation' to begin the process - this will highlight the first pair of amplitudes that will be transformed. The pairs represent outcomes whose binary representations differ only in the target qubit position. For controlled gates, only pairs where the control qubit is 1 will be processed. Use 'Process Next Pair' to transform one pair at a time, or 'Process All Pairs' to complete the transformation at once. 'Reset' returns to the default state, and 'Randomize' creates a new random state. You can experiment with different gates and qubit choices to see their effects on the quantum state.</p>
 
 <p>Try with target qubits 0, 1, and 2: </p>
 
