@@ -1,9 +1,9 @@
-
 # humejs
 
 humejs is a JavaScript-based application for encoding and visualizing quantum circuits. The project includes various modules for function encoding, frequency encoding, and quantum circuit visualization, using a variety of libraries and tools for computation and rendering.
 
 ## Features
+- **Quantum State Visualizer:** Interactive visualization of quantum states and transformations, with step-by-step pair processing
 - **Function Encoding:** Encodes mathematical functions for quantum processing.
 - **Frequency Encoding:** Encodes frequencies to simulate quantum systems.
 - **Quantum Circuit Visualization:** Visualizes quantum circuits and their state transitions.
@@ -18,6 +18,7 @@ humejs is a JavaScript-based application for encoding and visualizing quantum ci
 - **Webpack**: For bundling JavaScript files and assets.
 - **Babel**: For transpiling modern JavaScript.
 - **gh-pages**: For deploying to GitHub Pages.
+- **Lit**: For building web components.
 
 ## Project Structure
 ```
@@ -29,16 +30,20 @@ humejs/
 │   ├── frequency_encoding.html
 │   ├── function_encoding.html
 │   ├── index.html
-│   └── quantum_circuit.html
+│   ├── quantum_circuit.html
+│   └── tutorial.html         # Tutorial with quantum state visualizer
 ├── src/
 │   ├── js/
 │   │   ├── chapter03.js
 │   │   ├── chapter04.js
 │   │   ├── frequency_encoding.js
 │   │   ├── function_encoding.js
-│   │   └── quantum_circuit.js
+│   │   ├── quantum_circuit.js
+│   │   └── tutorial.js
 │   └── lib/
 │       ├── algos/
+│       │   ├── component.js      # Quantum gate simulator component
+│       │   ├── component2.js     # Quantum state viewer component
 │       │   ├── frequency_encoding.js
 │       │   ├── function_encoding.js
 │       │   └── quantum_circuit.js
@@ -94,17 +99,19 @@ humejs/
 ## Webpack Configuration
 
 - Entry Points:
-    - `chapter03.js`, `chapter04.js`: Logic for individual chapters.
-    - `function_encoding.js`: Function encoding logic.
-    - `frequency_encoding.js`: Frequency encoding logic.
-    - `quantum_circuit.js`: Quantum circuit logic.
+    - `chapter03.js`, `chapter04.js`: Logic for individual chapters
+    - `function_encoding.js`: Function encoding logic
+    - `frequency_encoding.js`: Frequency encoding logic
+    - `quantum_circuit.js`: Quantum circuit logic
+    - `tutorial.js`: Tutorial page with quantum state visualizer
     
 - Output:
-    - Bundled files are output to the `dist/` folder, cleaned before each build.
+    - Bundled files are output to the `dist/` folder, cleaned before each build
     
 - Plugins:
-    - `HtmlWebpackPlugin`: Generates HTML files for function encoding, frequency encoding, and quantum circuit pages.
-    - `CopyWebpackPlugin`: Copies `colormap.json` for use in visualizations.
+    - `HtmlWebpackPlugin`: Generates HTML files for all pages
+    - `CopyWebpackPlugin`: Copies static assets like `colormap.json`
+    - `Lit`: For building web components used in the quantum state visualizer
 
 ## License
 
