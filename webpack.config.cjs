@@ -10,7 +10,7 @@ module.exports = {
         quantum_circuit: './src/js/quantum_circuit.js', // Full name
         chapter03: './src/js/chapter03.js', // Chapter 3
         chapter04: './src/js/chapter04.js', // Added Chapter 4
-        tutorial: './src/js/tutorial.js'
+        primer: './src/js/primer.js'
     },
     output: {
         filename: '[name].bundle.js',
@@ -44,9 +44,9 @@ module.exports = {
             chunks: ['chapter04'],
         }),
         new HtmlWebpackPlugin({
-            template: './public/tutorial.html', // Added Chapter 4 template
-            filename: 'tutorial.html',
-            chunks: ['tutorial'],
+            template: './public/primer.html',
+            filename: 'primer.html',
+            chunks: ['primer'],
         }),
         new HtmlWebpackPlugin({
             template: './public/index.html',
@@ -58,6 +58,7 @@ module.exports = {
                 { from: 'src/lib/utils/colormap.json', to: 'colormap.json' },
                 { from: 'public/logo.png', to: 'logo.png' }, // Copy logo to output
                 { from: 'public/elementary-quantum-computing-banner.png', to: 'elementary-quantum-computing-banner.png' },
+                { from: 'public/book-cover.jpg', to: 'book-cover.jpg' },
             ],
         }),
     ],

@@ -3,7 +3,7 @@
 humejs is a JavaScript-based application for encoding and visualizing quantum circuits. The project includes various modules for function encoding, frequency encoding, and quantum circuit visualization, using a variety of libraries and tools for computation and rendering.
 
 ## Features
-- **Quantum State Visualizer:** Interactive visualization of quantum states and transformations, with step-by-step pair processing
+- **Quantum Transformation Simulator:** Interactive visualization of quantum states and transformations, with step-by-step pair processing
 - **Function Encoding:** Encodes mathematical functions for quantum processing.
 - **Frequency Encoding:** Encodes frequencies to simulate quantum systems.
 - **Quantum Circuit Visualization:** Visualizes quantum circuits and their state transitions.
@@ -31,7 +31,7 @@ humejs/
 │   ├── function_encoding.html
 │   ├── index.html
 │   ├── quantum_circuit.html
-│   └── tutorial.html         # Tutorial with quantum state visualizer
+│   └── primer.html         # Tutorial with quantum transformation simulator
 ├── src/
 │   ├── js/
 │   │   ├── chapter03.js
@@ -39,7 +39,7 @@ humejs/
 │   │   ├── frequency_encoding.js
 │   │   ├── function_encoding.js
 │   │   ├── quantum_circuit.js
-│   │   └── tutorial.js
+│   │   └── primer.js
 │   └── lib/
 │       ├── algos/
 │       │   ├── component.js      # Quantum gate simulator component
@@ -103,7 +103,7 @@ humejs/
     - `function_encoding.js`: Function encoding logic
     - `frequency_encoding.js`: Frequency encoding logic
     - `quantum_circuit.js`: Quantum circuit logic
-    - `tutorial.js`: Tutorial page with quantum state visualizer
+    - `primer.js`: Tutorial page with quantum transformation simulator
     
 - Output:
     - Bundled files are output to the `dist/` folder, cleaned before each build
@@ -111,7 +111,7 @@ humejs/
 - Plugins:
     - `HtmlWebpackPlugin`: Generates HTML files for all pages
     - `CopyWebpackPlugin`: Copies static assets like `colormap.json`
-    - `Lit`: For building web components used in the quantum state visualizer
+    - `Lit`: For building web components used in the quantum transformation simulator
 
 ## License
 
