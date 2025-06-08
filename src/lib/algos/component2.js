@@ -279,6 +279,13 @@ export class QuantumStateViewer extends LitElement {
 
   // Begin a new transformation: compute pairs, highlight first one, lock controls
   startTransformation() {
+    // Validate inputs before starting
+    const isControlledGate = ['CX', 'CY', 'CZ'].includes(this.gate);
+    if (isControlledGate && this.controlQubit === this.targetQubit) {
+      alert("Control and target qubits must be different for controlled gates.");
+      return; // Abort if invalid
+    }
+
     // Prepare the pairs to be processed
     this.transformationActive = true;
     this.processingStarted = false;
@@ -304,10 +311,6 @@ export class QuantumStateViewer extends LitElement {
 
   applyDynamicGate() {
     this.controlled = ['CX', 'CY', 'CZ'].includes(this.gate);
-    if (this.controlled && this.controlQubit === this.targetQubit) {
-      alert("Control and target qubits must be different for controlled gates.");
-      return;
-    }
     const n = 3;
     const generator = pair_generator(n, this.targetQubit);
 
@@ -529,8 +532,8 @@ export class QuantumStateViewer extends LitElement {
             <button @click="${this.startTransformation}">Start Transformation</button>
           `}
 
-          <button @click="${this.initializeState}">Reset</button>
-          <button @click="${this.randomizeState}">Randomize</button>
+          <button @click="${this.initializeState}" ?disabled="${controlsLocked}">Reset</button>
+          <button @click="${this.randomizeState}" ?disabled="${controlsLocked}">Randomize</button>
         </div>
 
         <!-- Render table -->

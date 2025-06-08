@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quantum Gate Simulator</title>
+  <title>Tutorial</title>
   <script src="https://cdn.jsdelivr.net/npm/mathjs@11.0.0/lib/browser/math.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.37.0/min/vs/editor/editor.main.css">
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -140,17 +140,52 @@
   </style>
 </head>
 <body>
-  <h1>You Understand It if You Can Model It</h1>
+  <h1>It's Elementary: Meet Quantum Computing</h1>
+
+  <div class="image-container" style="margin-bottom: 30px;">
+    <img src="elementary-quantum-computing-banner.png" alt="Quantum State Table and Circuit Banner" style="max-width: 95%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  </div>
+
+  <div style="margin: 20px auto; width: 80%;">
+    <ul style="list-style: none; padding-left: 0; line-height: 1.8;">
+      <li><a href="#you-understand-it-if-you-can-model-it">You Understand It if You Can Model It</a></li>
+      <li><a href="#simple-math-gives-best-performance">Simple Math Gives Best Performance</a></li>
+      <li><a href="#from-classical-to-quantum-systems">From Classical To Quantum Systems</a></li>
+      <li><a href="#quantum-programs-outcomes-and-probabilities">Quantum Programs, Outcomes & Probabilities</a></li>
+      <li><a href="#quantum-probabilities-are-more-complex">Quantum Probabilities Are More Complex</a></li>
+      <li><a href="#complex-number-refresher">Complex Number Refresher</a></li>
+      <li><a href="#quantum-state">Quantum State</a></li>
+      <li><a href="#state-tables-and-rose-charts">State Tables and Rose Charts</a></li>
+      <li><a href="#qubits">Qubits</a></li>
+      <li><a href="#one-qubit-systems">One-Qubit Systems</a></li>
+      <li><a href="#single-qubit-gates">Single-Qubit Gates</a></li>
+      <li><a href="#quantum-transformations">Quantum Transformations</a></li>
+      <li><a href="#controlled-transformations">Controlled Transformations</a></li>
+      <li><a href="#quantum-parallelism">Quantum Parallelism</a></li>
+      <li><a href="#superposition-and-entanglement">Superposition and Entanglement</a></li>
+      <li><a href="#quantum-measurement">Quantum Measurement</a></li>
+      <li><a href="#structure-of-quantum-computations">The Structure of Quantum Computations</a></li>
+      <li><a href="#quantum-circuits">Quantum Circuits</a></li>
+      <li><a href="#each-circuit-is-reversible">Each Circuit Is Reversible</a></li>
+      <li><a href="#quantum-advantage">Quantum Advantage</a></li>
+      <li><a href="#what-problems-can-benefit">What Problems Can Benefit?</a></li>
+      <li><a href="#conclusion">Conclusion</a></li>
+      <li><a href="#appendix-a">Appendix A: Multi-Target Transformations</a></li>
+      <li><a href="#appendix-b">Appendix B: Code Implementation</a></li>
+    </ul>
+  </div>
+
+  <h1 id="you-understand-it-if-you-can-model-it">You Understand It if You Can Model It</h1>
   <p>To make quantum computers, you need to know a lot about quantum physics. But to use them, you don't need to know all that. With this introduction, you will be able to model quantum computations by creating a simple quantum simulator with a few lines of code, as detailed in an appendix.</p>
 
-  <h1>Simple Math Gives Best Performance and Understanding</h1>
+  <h1 id="simple-math-gives-best-performance">Simple Math Gives Best Performance and Understanding</h1>
 <p>When explaining new ideas, it's helpful to start with what people already know. But what common knowledge is useful in learning quantum computing? Many think you need to study high-level linear algebra before understanding quantum computing's strange nature. This isn't true. Basic math (like binary numbers, trigonometry, and probabilities) is enough.</p> 
 
 <p>Quantum computers have two main features that regular computers don't: quantum parallelism and quantum measurement. Classical computers have limited ways of parallel computing (like vector processing and SIMD), which are like quantum parallelism, but only on a small scale. They can also take samples from probability distributions, similar to quantum measurement, but again, they can only do this efficiently on a small scale.</p>
  <p>It turns out that using simple math not only simplifies understanding but also enhances performance when modeling quantum computations.
 </p>   
 
-<h1>From Classical To Quantum Systems</h1>
+<h1 id="from-classical-to-quantum-systems">From Classical To Quantum Systems</h1>
 <p>You're used to using numbers to understand systems that matter to you, like the stuff in your fridge, your account balances, or your investment portfolio. In portfolios, percentages have to add up to 100, and you can change your allocations by moving money between investments.</p>
 
 <p>Quantum systems also have attributes with values that are constrained as a total, and you can change them with quantum transformations, which essentially move values between attributes.</p>
@@ -158,7 +193,7 @@
 <p>The big difference is what happens when we observe (measure) a quantum system's state. The system's state collapses into one with just one attribute, like putting all your investments into one instrument. We only see one attribute at random, with a likelihood that depends on its value. This is the only strange thing about quantum systems, but once you understand it, it is not hard to use it.</p>
 <p>Philosophers of science often engage in discussions about the existence of these values prior to observation. When it comes to designing quantum programs, these values are relevant, as they must be taken into consideration. Therefore, from the perspective of quantum program developers, these values are considered to exist. However, they are not stored anywhere, like we are used to values in classical computing. They are similar to attributes like the speed or the rotations per minute desribing the state of a car.  We know how to change and measure them without directly writing and reading them.</p>
 
-<h1>Quantum Programs, Outcomes and Probabilities</h1>
+<h1 id="quantum-programs-outcomes-and-probabilities">Quantum Programs, Outcomes and Probabilities</h1>
 
 <p>In a quantum computation, the state of the underlying quantum system is altered, and there are various possible outcomes, each with a particular probability. These potential outcomes are attributes of the quantum system's state.</p>
 <p>When executing a quantum program on a quantum computer, a single outcome is observed upon measuring the state of the quantum system. To obtain valuable information, the same program must be run multiple times, and the results of each run must be collected. A single execution is commonly referred to as a shot, while the number of times an outcome is observed is called a count. </p>
@@ -173,7 +208,7 @@
     <img src="https://learnqc.com/intro_files/image-20240505150613520.png">
 </div>
 
-<h1>Quantum Probabilities Are More Complex</h1>
+<h1 id="quantum-probabilities-are-more-complex">Quantum Probabilities Are More Complex</h1>
 <p>While we can only count outcomes of a quantum computation and approximate their probabilities, the values comprising a quantum state (one per possible outcome) are not straight probabilities. They are complex numbers, called probability amplitudes, or simply amplitudes. We can think of an amplitude as an arrow, or force, having a magnitude and a direction. The probability of an outcome is actually the squared magnitude of its amplitude. This is one of the fundamental facts of quantum theory that we just accept without trying to explain.</p>
 <p>Depending on the context, it is useful to visualize an amplitude (complex number) in two ways:  </p>
 <p>1. An arrow starting from the origin of the plane and pointing to the corresponding point of the complex number.  </p>
@@ -186,7 +221,7 @@
 
 <p>The amplitudes comprising the state of a qubit system cannot have magnitudes larger than 1, since the squared magnitudes are probabilities.   </p>
 
-<h1>Complex Number Refresher</h1>
+<h1 id="complex-number-refresher">Complex Number Refresher</h1>
 <p>
   This is the most advanced math needed in this article. Recall that a complex number has an algebraic form:
 </p>
@@ -223,7 +258,7 @@
     $$ \theta = \text{atan2}(b, a). \quad \tag{5} $$
   </div>
 
-  <h1>Quantum State</h1>
+  <h1 id="quantum-state">Quantum State</h1>
 <p>
   As mentioned, each possible outcome of a quantum computation has a probability amplitude associated to it, and the probability of an outcome is the squared magnitude of its corresponding amplitude. The sum of the probabilities of all possible outcomes adds up to 1.
 </p>
@@ -277,7 +312,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 
 
 
-<h1>State Tables and Rose Charts</h1>
+<h1 id="state-tables-and-rose-charts">State Tables and Rose Charts</h1>
 <p>
   Comprehension tables are used to show formulas or expressions in quantum states. For a concrete state, we can use a state table with one row of expanded information for each possible outcome of a quantum computation, or a simpler polar area diagram where the outcomes are represented by circle sectors, and their probabilities are sub-sectors whose area is proportional to the probability.
 </p>
@@ -291,7 +326,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   These two representations are versions of a bar plot and can be preferred in different contexts.
 </p>
 
-<h1>Qubits</h1>
+<h1 id="qubits">Qubits</h1>
 <p>
   A qubit is a digit in the binary representation of outcomes. A quantum system with a single qubit has two possible outcomes, 0 or 1. A two-qubit system has four possible outcomes, consisting of all two-digit binary numbers:
 </p>
@@ -352,7 +387,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   outcomes.
 </p>
 
-<h1>One-Qubit Systems</h1>
+<h1 id="one-qubit-systems">One-Qubit Systems</h1>
 
 <p>How do we explain the difference between a classical and a quantum bit? A quantum bit, or better said, a one-qubit system, has a probability with direction for each of the two possible outcomes, while in a classical bit, exactly one outcome is possible. We represent outcomes with circle sectors, and directions with colors on a color wheel. For two outcomes, the sectors are semi-circles. Note that the comparison works only for one-(qu)bit systems, not for a (qu)bit in a larger system. Many comparisons in the quantum computing literature are incorrect or incomplete, especially those saying that a qubit can have any value between 0 and 1. </p>
 
@@ -360,7 +395,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
     <img src="https://learnqc.com/intro_files/image-20240508203542405.png">
 </div>
 
-<h1>Single-Qubit Gates</h1>
+<h1 id="single-qubit-gates">Single-Qubit Gates</h1>
 
 <p>
   We visualize the effect of applying quantum gates using table comprehensions, state tables, and color wheels.
@@ -397,7 +432,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   <div id="RZ" class="app"></div>
 
   
-  <h1>Quantum Transformations</h1>
+  <h1 id="quantum-transformations">Quantum Transformations</h1>
 
   <p>An elementary quantum transformation is a single-qubit gate applied to a target qubit.</p>
 
@@ -434,13 +469,13 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 
 <div id="quantum-viewer-container-1" class="app"></div>
 
-<h1>Controlled Transformations</h1>
+<h1 id="controlled-transformations">Controlled Transformations</h1>
 
 <p>A gate-based quantum transformation applies a quantum gate to a target qubit and has a number of control qubits (different from the target). The same gate formula is used to process amplitude pairs, but only the paired outcomes that have 1 in the control positions get their amplitudes processed. For example, in a three-qubit system, if the middle qubit is a control qubit, the outcomes that have 0 as the middle digit in their binary representation are left unchanged. They are shown grayed out in the image that shows the pairs corresponding to target qubit 0. The paired outcomes differ only in the last digit (qubit 0).</p>
 <p>Try different target and control qubits: </p>
 <div id="quantum-viewer-container-2" class="app"></div>
 
-<h1>Quantum Parallelism</h1>
+<h1 id="quantum-parallelism">Quantum Parallelism</h1>
 
 <p>The behavior of quantum gates is a fascinating blend of the familiar and the unexpected.  Just as we're accustomed to transfers between investments, quantum gates act similarly, transferring amplitudes (balances) between outcomes (accounts).  However, here's where the twist lies: unlike in our everyday world, these "transfers" occur simultaneously, governed by the same mathematical formula. This is called quantum parallelism.</p>
 
@@ -451,11 +486,11 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 
 <p>This simultaneous operation is the secret sauce of quantum computing, offering unparalleled advantages in certain applications. Yet, this very feature also restricts the types of problems that can benefit from a quantum approach.</p>
 
-<h1>Superposition and Entanglement</h1>
+<h1 id="superposition-and-entanglement">Superposition and Entanglement</h1>
 
 <p>These quantum mechanics concepts are crucial to the implementation of quantum computers, but are not directly relevant to quantum computing. Quantum superposition expresses the uncertainty of what outcome will be observed in a measurement. Quantum entanglement refers to the fact that individual qubit measurements are not always independent of each other. It is the implementation mechanism for controlled transformations.</p>
 
-<h1>Quantum Measurement</h1>
+<h1 id="quantum-measurement">Quantum Measurement</h1>
 
 <p>How can we visualize the measurement operation of a quantum state? In the measurement context, a quantum state is essentially a probability distribution. The probability of an outcome is the squared magnitude of its amplitude. Measurement is sampling from this probability distribution, and the measurement outcome is the sample. This outcome receives probability 1 after measurement. We visualize the state as a rose (polar area) diagram, which is the circular version of a bar chart, and the measurement as spinning this diagram. The resulting collapsed state is a rose diagram where the measurement outcome has probability 1 (and the rest of the outcomes have probability 0). </p>
 
@@ -463,7 +498,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   <img src="https://learnqc.com/intro_files/image-20240508204711688.png">
 </div>
 
-<h1>The Structure of Quantum Computations</h1>
+<h1 id="structure-of-quantum-computations">The Structure of Quantum Computations</h1>
 
 <p>Putting the fundamentals together: start with the default quantum state, change it with quantum transformations, measure it, record the outcome and repeat. </p>
 
@@ -486,7 +521,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   <img src="https://learnqc.com/intro_files/image-20240504181851864.png">
 </div>
 
-<h1>Quantum Circuits</h1>
+<h1 id="quantum-circuits">Quantum Circuits</h1>
 
 <p>A quantum program, or circuit, consists of a sequence of quantum transformations. A typical transformation in a qubit-based quantum system is defined by a single-qubit gate, a target qubit, and a number of other control qubits.</p>
 
@@ -507,7 +542,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   <a href="quantum_circuit.html">Quantum Circuit</a>
 </p>
 
-<h1>Each Circuit Is Reversible</h1>
+<h1 id="each-circuit-is-reversible">Each Circuit Is Reversible</h1>
 <p>
   An important property of quantum transformations is that they are reversible: each has an inverse that cancels its action.
   The inverse of a transformation is obtained by using the inverse of its underlying elementary gate, and keeping the target and controls as they are.
@@ -519,7 +554,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   The inverse of a circuit is obtained by applying the inverses of its transformations in reversed order.
 </p>
 
-<h1>Quantum Advantage</h1>
+<h1 id="quantum-advantage">Quantum Advantage</h1>
 <p>
   Quantum advantage comes from exploiting quantum parallelism and measurement. In order to exploit parallelism, we need to counter its side effect:
   all amplitudes change in pairs according to a common formula. This is done through interference, where simultaneous changes to the numbers
@@ -544,7 +579,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   Looking for quantum advantage is essentially looking for sources of interference.
 </p>
 
-<h1>What Problems Can Benefit From a Quantum Approach?</h1>
+<h1 id="what-problems-can-benefit">What Problems Can Benefit From a Quantum Approach?</h1>
 <p>
   Quantum computing is very specialized, and will not replace traditional computing, in the same way helicopters cannot replace cars.
   Quantum parallelism and quantum measurement can help solve problems that cannot easily be solved with classical computers, but at the same
@@ -556,7 +591,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   <a href="https://learnqc.com">learnqc.com</a>.
 </p>
 
-<h1>Conclusion</h1>
+<h1 id="conclusion">Conclusion</h1>
 <p>
   The concepts introduced in this document give enough information to define the implementation of a simple quantum simulator. We include such
   a simple implementation in Appendix B, where we also include a simple test, and its equivalent in Qiskit, IBM's quantum framework. The same
@@ -565,7 +600,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   <a href="https://github.com/QuState/spinoza">https://github.com/QuState/spinoza</a>.
 </p>
 
-<h1>Appendix A: Multi-Target Transformations</h1>
+<h1 id="appendix-a">Appendix A: Multi-Target Transformations</h1>
 <p>
   How do we visualize multi-target (sometimes called multi-qubit) transformations? We showed how single-qubit gates recombine pairs of amplitudes.
   It turns out that multi-target transformations process groups of amplitudes, and preserve the combined probability of each group. We can use the
@@ -604,7 +639,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
 </div>
 
 
-<h1>Appendix B: Code Implementation</h1>
+<h1 id="appendix-b">Appendix B: Code Implementation</h1>
 
 <pre style="background-color: #f0f0f0; padding: 10px; border-radius: 5px; text-align: left; max-width: 80%; margin: 0 auto;">
   <code>
@@ -711,7 +746,7 @@ state = [a[k] + 1j * b[k] for k in range(N)]
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.37.0/min/vs/loader.js"></script>
 
 
-  <script src="dist/bundle.js"></script>
+  <script src="/dist/bundle.js"></script>
 
 
 </body>

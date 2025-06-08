@@ -57,6 +57,7 @@ module.exports = {
             patterns: [
                 { from: 'src/lib/utils/colormap.json', to: 'colormap.json' },
                 { from: 'public/logo.png', to: 'logo.png' }, // Copy logo to output
+                { from: 'public/elementary-quantum-computing-banner.png', to: 'elementary-quantum-computing-banner.png' },
             ],
         }),
     ],
