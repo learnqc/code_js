@@ -143,6 +143,7 @@ export class QuantumStateViewer extends LitElement {
       gap: 15px;
       margin: 15px 0;
       justify-content: center;
+      align-items: center;
     }
 
     button,
@@ -160,6 +161,12 @@ export class QuantumStateViewer extends LitElement {
 
     .highlight {
       background-color: lightyellow;
+    }
+
+    .control-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .theta-container {
@@ -449,15 +456,17 @@ export class QuantumStateViewer extends LitElement {
 
     const controlsLocked = this.transformationActive;
 
+    const qubitOptions = Array.from({ length: this.num_qubits }, (_, i) => i);
+
     return html`
       <div>
-        <h3>quantum transformation simulator</h3>
+        <h3>Quantum Transformation Simulator</h3>
 
         <!-- Controls at the top: first row -->
         <div class="buttons" style="margin-bottom: 0;">
-          <label>
-            Gate:
-            <select @change="${(e) => { this.gate = e.target.value; this.dynamicSteps = []; this.stepIndex = 0; this.processingStarted = false; }}" ?disabled="${controlsLocked}">
+          <div class="control-item">
+            <label for="gate-select">Gate:</label>
+            <select id="gate-select" @change="${(e) => { this.gate = e.target.value; this.dynamicSteps = []; this.stepIndex = 0; this.processingStarted = false; }}" ?disabled="${controlsLocked}">
               <option value="X" ?selected="${this.gate === 'X'}">X</option>
               <option value="Y" ?selected="${this.gate === 'Y'}">Y</option>
               <option value="Z" ?selected="${this.gate === 'Z'}">Z</option>
@@ -470,40 +479,45 @@ export class QuantumStateViewer extends LitElement {
               <option value="RY" ?selected="${this.gate === 'RY'}">RY</option>
               <option value="RZ" ?selected="${this.gate === 'RZ'}">RZ</option>
             </select>
-          </label>
+          </div>
 
           ${gateRequiresTarget ? html`
-            <label>
-              Target Qubit:
-              <input
-                type="number"
-                min="0"
-                max="${Math.log2(this.state.length) - 1}"
+            <div class="control-item">
+              <label for="target-qubit">Target Qubit:</label>
+              <select
+                id="target-qubit"
                 .value="${this.targetQubit}"
-                @input="${(e) => { this.targetQubit = Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; this.processingStarted = false; }}"
+                @change="${this.handleTargetQubitChange}"
                 ?disabled="${controlsLocked}"
-              />
-            </label>
+              >
+                ${qubitOptions
+                  .filter(q => q !== this.controlQubit || !this.controlled)
+                  .map(q => html`<option .value="${q}">${q}</option>`)}
+              </select>
+            </div>
           ` : ''}
 
           ${gateRequiresControl ? html`
-            <label>
-              Control Qubit:
-              <input
-                type="number"
-                min="0"
-                max="${Math.log2(this.state.length) - 1}"
+            <div class="control-item">
+              <label for="control-qubit">Control Qubit:</label>
+              <select
+                id="control-qubit"
                 .value="${this.controlQubit}"
-                @input="${(e) => { this.controlQubit = Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; this.processingStarted = false; }}"
+                @change="${this.handleControlQubitChange}"
                 ?disabled="${controlsLocked}"
-              />
-            </label>
+              >
+                ${qubitOptions
+                  .filter(q => q !== this.targetQubit)
+                  .map(q => html`<option .value="${q}">${q}</option>`)}
+              </select>
+            </div>
           ` : ''}
 
           ${gateRequiresAngle ? html`
-            <label>
-              θ (radians):
+            <div class="control-item">
+              <label for="theta-input">θ (radians):</label>
               <input
+                id="theta-input"
                 type="number"
                 step="0.1"
                 .value="${this.theta}"
@@ -511,7 +525,7 @@ export class QuantumStateViewer extends LitElement {
                 ?disabled="${controlsLocked}"
                 style="width: 60px;"
               />
-            </label>
+            </div>
           ` : ''}
         </div>
 
@@ -542,6 +556,28 @@ export class QuantumStateViewer extends LitElement {
         </div>
       </div>
     `;
+  }
+
+  handleTargetQubitChange(e) {
+    const newTarget = parseInt(e.target.value, 10);
+    this.targetQubit = newTarget;
+    if (this.controlQubit === newTarget) {
+      // Find the first available qubit that is not the new target
+      const availableQubits = Array.from({ length: this.num_qubits }, (_, i) => i);
+      this.controlQubit = availableQubits.find(q => q !== newTarget);
+    }
+    this.requestUpdate();
+  }
+
+  handleControlQubitChange(e) {
+    const newControl = parseInt(e.target.value, 10);
+    this.controlQubit = newControl;
+    if (this.targetQubit === newControl) {
+      // Find the first available qubit that is not the new control
+      const availableQubits = Array.from({ length: this.num_qubits }, (_, i) => i);
+      this.targetQubit = availableQubits.find(q => q !== newControl);
+    }
+    this.requestUpdate();
   }
 }
 
