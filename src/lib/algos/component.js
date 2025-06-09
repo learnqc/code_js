@@ -74,12 +74,12 @@ export class QuantumGateSimulator extends LitElement {
       display: flex;
       flex-wrap: wrap;
       gap: 50px;
-      margin-top: 20px;
+      margin-top: 0;
       justify-content: center;
     }
     .wheel-container {
       text-align: center;
-      margin: 20px;
+      margin: 0;
     }
     .wheel-title {
       margin: 5px 0;
@@ -415,15 +415,16 @@ export class QuantumGateSimulator extends LitElement {
 
         <!-- State tables for Before / After -->
         <div>
-          ${this.renderTable(this.originalState, 'Original State')}
-          ${this.gateApplied ? this.renderTable(this.state, 'After Applying Gate') : ''}
+          ${this.renderTable(this.originalState, 'Initial State Table')}
+          ${this.gateApplied ? this.renderTable(this.state, 'Final State Table') : ''}
         </div>
 
+        <h4>Clock Representation</h4>
         <!-- Color Wheels for Before / After -->
         <div class="color-wheels">
           <!-- Original State Wheels -->
           <div class="wheel-container">
-            <div class="wheel-title">Before Gate</div>
+            <div class="wheel-title">Initial State</div>
             ${this.renderColorWheel(this.originalState[0].amplitude, this.originalState[1].amplitude)}
           </div>
 
@@ -444,7 +445,7 @@ export class QuantumGateSimulator extends LitElement {
           ${this.gateApplied
             ? html`
                 <div class="wheel-container">
-                  <div class="wheel-title">After Gate</div>
+                  <div class="wheel-title">Final State</div>
                   ${this.renderColorWheel(this.state[0].amplitude, this.state[1].amplitude)}
                 </div>
               `
