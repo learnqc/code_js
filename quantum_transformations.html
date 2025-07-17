@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Transformations</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            background-color: #F9F7F7;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #112D4E;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            color: white;
+            flex-shrink: 0;
+            height: 100%;
+            overflow-y: auto;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo-container img {
+            width: 50px;
+            margin-right: 10px;
+        }
+        .logo-container a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        h2 {
+            color: #F9F7F7;
+        }
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        quantum-state-viewer {
+            transform: scale(1.2);
+            transform-origin: top center;
+            margin-top: 20px;
+        }
+    </style>
+<script defer src="vendors-node_modules_mathjs_lib_esm_entry_pureFunctionsAny_generated_js.bundle.js"></script><script defer src="vendors-node_modules_lit_index_js.bundle.js"></script><script defer src="src_lib_algos_component2_js.bundle.js"></script><script defer src="quantum_transformations.bundle.js"></script></head>
+<body>
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="logo.png" alt="Quantum Logo">
+            <a href="index.html">Building Quantum Software</a>
+        </div>
+    </div>
+    <div class="main-content">
+        <quantum-state-viewer></quantum-state-viewer>
+    </div>
+    <script type="module" src="dist/quantum_transformations.bundle.js"></script>
+</body>
+</html> 
