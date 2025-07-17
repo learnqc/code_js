@@ -62,7 +62,19 @@ function update_target_options(num_qubits) {
 async function update_visualization() {
     const target = parseInt(document.getElementById('target').value);
     const gate = document.getElementById('gate').value;
-    const angle = document.getElementById('angle').value;
+    const angleRadians = document.getElementById('angle').value;
+    
+    // Validate angle input for gates that require it
+    if (degree_gates.includes(gate)) {
+        const angleNum = parseFloat(angleRadians);
+        if (angleRadians === '' || isNaN(angleNum)) {
+            alert("Please enter a valid value for angle (radians).\nIt must be a number.");
+            return;
+        }
+    }
+    
+    // Convert radians to degrees for the quantum circuit library
+    const angleDegrees = angleRadians === '' ? '' : (parseFloat(angleRadians) * 180 / Math.PI).toString();
     
     // Retrieve selected control qubits from the visual selectors
     const selectedSelectors = document.querySelectorAll('#controls-container .qubit-selector.selected');
@@ -73,7 +85,7 @@ async function update_visualization() {
         return;
     }
 
-    apply_gate(qc, target, gate, angle, controls);
+    apply_gate(qc, target, gate, angleDegrees, controls);
 
     document.getElementById('circuit_title').innerHTML = '<u>Circuit</u>';
     draw_circuit(circuit_to_string(qc), document.getElementById('circuit'));

@@ -6,7 +6,6 @@
   "scripts": {
     "test": "node run_tests.js",
     "test:encoding": "node run_encoding_tests.js",
-    "test:component2": "node run_component2sts.js",
     "test:all": "node run_all_tests.js",
     "build": "webpack --watch",
     "deploy": "gh-pages -d dist"

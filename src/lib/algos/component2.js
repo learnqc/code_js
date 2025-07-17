@@ -288,9 +288,14 @@ export class QuantumStateViewer extends LitElement {
   startTransformation() {
     // Validate inputs before starting
     const isControlledGate = ['CX', 'CY', 'CZ'].includes(this.gate);
+    const requiresRadian = ['Phase', 'RX', 'RY', 'RZ'].includes(this.gate);
     if (isControlledGate && this.controlQubit === this.targetQubit) {
       alert("Control and target qubits must be different for controlled gates.");
       return; // Abort if invalid
+    }
+    if (requiresRadian && (this.theta === '' || this.theta === null || isNaN(this.theta))) {
+      alert("Please enter a valid value for θ (radians).\nIt must be a number.");
+      return;
     }
 
     // Prepare the pairs to be processed
@@ -453,6 +458,7 @@ export class QuantumStateViewer extends LitElement {
 
     // Log the target qubit value when it changes
     console.log('Target Qubit:', this.targetQubit);
+    console.log('Control Qubit:', this.controlQubit, 'Gate:', this.gate, 'Requires Control:', gateRequiresControl);
 
     const controlsLocked = this.transformationActive;
 
@@ -469,9 +475,16 @@ export class QuantumStateViewer extends LitElement {
             <select id="gate-select" @change="${(e) => { 
               this.gate = e.target.value; 
               this.controlled = ['CX', 'CY', 'CZ'].includes(this.gate);
+              console.log('Gate changed to:', this.gate, 'controlled:', this.controlled);
+              // Set control qubit to 1 when switching to controlled gates
+              if (this.controlled) {
+                this.controlQubit = 1;
+                console.log('Set control qubit to:', this.controlQubit);
+              }
               this.dynamicSteps = [];
               this.stepIndex = 0;
               this.processingStarted = false; 
+              this.requestUpdate(); // Force update to ensure UI reflects changes
             }}" ?disabled="${controlsLocked}">
               <option value="X" ?selected="${this.gate === 'X'}">X</option>
               <option value="Y" ?selected="${this.gate === 'Y'}">Y</option>
@@ -525,7 +538,7 @@ export class QuantumStateViewer extends LitElement {
                 type="number"
                 step="0.1"
                 .value="${this.theta}"
-                @input="${(e) => { this.theta = Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; this.processingStarted = false; }}"
+                @input="${(e) => { this.theta = e.target.value === '' ? NaN : Number(e.target.value); this.dynamicSteps = []; this.stepIndex = 0; this.processingStarted = false; }}"
                 ?disabled="${controlsLocked}"
                 style="width: 60px;"
               />
@@ -560,6 +573,14 @@ export class QuantumStateViewer extends LitElement {
         </div>
       </div>
     `;
+  }
+
+  updated() {
+    // Force the control qubit dropdown to the correct value after rendering
+    const controlSelect = this.renderRoot?.querySelector('#control-qubit');
+    if (controlSelect && String(controlSelect.value) !== String(this.controlQubit)) {
+      controlSelect.value = String(this.controlQubit);
+    }
   }
 
   handleTargetQubitChange(e) {
