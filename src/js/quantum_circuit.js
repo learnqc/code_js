@@ -1,4 +1,4 @@
-import { add_gate, create_circuit, apply_gate, last_step, get_state, no_arg_gates, control_gates, arg_gates } from '../lib/algos/quantum_circuit.js';
+import { add_gate, create_circuit, apply_gate, last_step, get_state, no_arg_gates, control_gates, arg_gates, multiple_control_gates, degree_gates } from '../lib/algos/quantum_circuit.js';
 import { QuantumRegister, QuantumCircuit } from '../lib/simulator/circuit.js';
 import { circuit_to_string, draw_circuit, state_table_to_tabulator, state_table_to_html } from '../lib/utils/common.js';
 
@@ -7,20 +7,55 @@ let qc;
 
 function update_target_options(num_qubits) {
     const target = document.getElementById('target');
-    const controls = document.getElementById('controls');
+    const controlsContainer = document.getElementById('controls-container');
     target.innerHTML = ''; // Clear existing options
-    controls.innerHTML = ''; // Clear existing options for controls
+    controlsContainer.innerHTML = ''; // Clear existing visual selectors
 
     for (let i = 0; i < num_qubits; i++) {
+        // Create target option
         const option = document.createElement('option');
         option.value = i;
         option.text = `${i}`;
         target.appendChild(option);
 
-        const controlOption = document.createElement('option');
-        controlOption.value = i;
-        controlOption.text = `${i}`;
-        controls.appendChild(controlOption);
+        // Create visual qubit selector
+        const qubitSelector = document.createElement('div');
+        qubitSelector.className = 'qubit-selector';
+        qubitSelector.textContent = i;
+        qubitSelector.dataset.qubitIndex = i;
+        qubitSelector.disabled = true; // Initially disabled
+        
+        // Add click event listener for selection
+        qubitSelector.addEventListener('click', function() {
+            if (!this.disabled) {
+                const gate = document.getElementById('gate').value;
+                const target = parseInt(document.getElementById('target').value);
+                const currentQubitIndex = parseInt(this.dataset.qubitIndex);
+                
+                // Prevent selecting target qubit as control
+                if (currentQubitIndex === target) {
+                    return; // Don't allow selection
+                }
+                
+                if (control_gates.includes(gate)) {
+                    // For single control gates, only allow one selection
+                    if (this.classList.contains('selected')) {
+                        // If already selected, deselect it
+                        this.classList.remove('selected');
+                    } else {
+                        // If not selected, deselect all others and select this one
+                        const allSelectors = document.querySelectorAll('#controls-container .qubit-selector');
+                        allSelectors.forEach(selector => selector.classList.remove('selected'));
+                        this.classList.add('selected');
+                    }
+                } else if (multiple_control_gates.includes(gate)) {
+                    // For multiple control gates, allow multiple selections
+                    this.classList.toggle('selected');
+                }
+            }
+        });
+        
+        controlsContainer.appendChild(qubitSelector);
     }
 }
 
@@ -29,9 +64,9 @@ async function update_visualization() {
     const gate = document.getElementById('gate').value;
     const angle = document.getElementById('angle').value;
     
-    // Retrieve selected control qubits from the multi-select list
-    const controlsSelect = document.getElementById('controls');
-    const controls = Array.from(controlsSelect.selectedOptions).map(option => parseInt(option.value));
+    // Retrieve selected control qubits from the visual selectors
+    const selectedSelectors = document.querySelectorAll('#controls-container .qubit-selector.selected');
+    const controls = Array.from(selectedSelectors).map(selector => parseInt(selector.dataset.qubitIndex));
 
     if (!qc) {
         console.error('Quantum circuit (qc) is not defined.');
@@ -54,6 +89,12 @@ async function update_qc() {
     qc = create_circuit(num_qubits);
 
     update_target_options(num_qubits); // Update the target dropdown options
+    
+    // Reset gate selection to H gate when qubit count changes
+    document.getElementById('gate').value = 'h';
+    
+    // Update the UI to reflect the new gate selection
+    update_angle_and_controls();
 
     document.getElementById('circuit_title').innerHTML = '<u>Circuit</u>';
     draw_circuit(circuit_to_string(qc), document.getElementById('circuit'));
@@ -62,28 +103,108 @@ async function update_qc() {
     await state_table_to_html(state, 'table');
 }
 
-function update_angle() {
+function update_angle_and_controls() {
     const gate = document.getElementById('gate').value;
-    const angle = document.getElementById('angle');
-    const controlsInput = document.getElementById('controls');
-
-    if (arg_gates.includes(gate) || no_arg_gates.includes(gate)) {
-        controlsInput.disabled = true;
+    const angleInput = document.getElementById('angle');
+    const controlsInputGroup = document.getElementById('controls-input-group');
+    const controlsContainer = document.getElementById('controls-container');
+    
+    // Show/hide angle input
+    if (degree_gates.includes(gate)) {
+        angleInput.disabled = false;
+        angleInput.parentElement.style.display = '';
     } else {
-        controlsInput.disabled = false;
+        angleInput.disabled = true;
+        angleInput.value = '';
+        angleInput.parentElement.style.display = 'none';
     }
 
-    if (no_arg_gates.includes(gate) || control_gates.includes(gate)) {
-        angle.disabled = true;
-        angle.value = ''; // Clear the angle value
+    // Show/hide and enable/disable visual qubit selectors
+    const qubitSelectors = controlsContainer.querySelectorAll('.qubit-selector');
+    
+    if (multiple_control_gates.includes(gate)) {
+        controlsInputGroup.style.display = '';
+        qubitSelectors.forEach(selector => {
+            selector.disabled = false;
+            selector.classList.remove('disabled');
+        });
+        // Update visual states only when controls are shown
+        update_qubit_selector_states();
+    } else if (control_gates.includes(gate)) {
+        controlsInputGroup.style.display = '';
+        qubitSelectors.forEach(selector => {
+            selector.disabled = false;
+            selector.classList.remove('disabled');
+        });
+        // Update visual states only when controls are shown
+        update_qubit_selector_states();
     } else {
-        angle.disabled = false;
+        controlsInputGroup.style.display = 'none';
+        qubitSelectors.forEach(selector => {
+            selector.disabled = true;
+            selector.classList.add('disabled');
+            selector.classList.remove('selected');
+        });
     }
 }
 
+// Function to update visual state of qubit selectors
+function update_qubit_selector_states() {
+    const gate = document.getElementById('gate').value;
+    const target = parseInt(document.getElementById('target').value);
+    const qubitSelectors = document.querySelectorAll('#controls-container .qubit-selector');
+    
+    qubitSelectors.forEach(selector => {
+        const qubitIndex = parseInt(selector.dataset.qubitIndex);
+        
+        // Clear any target highlighting
+        selector.classList.remove('target-qubit');
+        
+        // If this is the target qubit, mark it visually
+        if (qubitIndex === target) {
+            selector.classList.add('target-qubit');
+        }
+        
+        // If this is a single control gate and target is selected as control, deselect it
+        if (control_gates.includes(gate) && qubitIndex === target && selector.classList.contains('selected')) {
+            selector.classList.remove('selected');
+        }
+    });
+}
+
+// Reset function to clear circuit and reset interface
+async function reset_circuit() {
+    // Reset gate selection to H
+    document.getElementById('gate').value = 'h';
+    
+    // Reset target to 0
+    document.getElementById('target').value = '0';
+    
+    // Clear angle input
+    document.getElementById('angle').value = '';
+    
+    // Clear all control selections
+    const qubitSelectors = document.querySelectorAll('#controls-container .qubit-selector');
+    qubitSelectors.forEach(selector => {
+        selector.classList.remove('selected');
+    });
+    
+    // Update the interface state
+    update_angle_and_controls();
+    update_qubit_selector_states();
+    
+    // Create a fresh circuit
+    await update_qc();
+}
+
 update_qc();
-update_angle();
+update_angle_and_controls();
 
 document.getElementById('apply').addEventListener('click', update_visualization);
-document.getElementById('num_qubits').addEventListener('change', update_qc);
-document.getElementById('gate').addEventListener('change', update_angle);
+document.getElementById('reset').addEventListener('click', reset_circuit);
+document.getElementById('num_qubits').addEventListener('change', function() {
+    update_qc();
+});
+document.getElementById('gate').addEventListener('change', update_angle_and_controls);
+document.getElementById('target').addEventListener('change', update_qubit_selector_states);
+document.addEventListener('DOMContentLoaded', update_angle_and_controls);

@@ -10,7 +10,8 @@ module.exports = {
         quantum_circuit: './src/js/quantum_circuit.js', // Full name
         chapter03: './src/js/chapter03.js', // Chapter 3
         chapter04: './src/js/chapter04.js', // Added Chapter 4
-        primer: './src/js/primer.js'
+        primer: './src/js/primer.js',
+        quantum_transformations: './src/js/quantum_transformations.js',
     },
     output: {
         filename: '[name].bundle.js',
@@ -47,6 +48,11 @@ module.exports = {
             template: './public/primer.html',
             filename: 'primer.html',
             chunks: ['primer'],
+        }),
+        new HtmlWebpackPlugin({
+            template: './public/quantum_transformations.html',
+            filename: 'quantum_transformations.html',
+            chunks: ['quantum_transformations'],
         }),
         new HtmlWebpackPlugin({
             template: './public/index.html',

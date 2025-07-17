@@ -4,7 +4,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node run_tests.js",
+    "test:encoding": "node run_encoding_tests.js",
+    "test:all": "node run_all_tests.js",
     "build": "webpack --watch",
     "deploy": "gh-pages -d dist"
   },

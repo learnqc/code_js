@@ -168,7 +168,7 @@
 
 </style>
 
-<script defer src="vendors-node_modules_microsoft_quantum-viz_js_dist_qviz_min_js-node_modules_d3_src_index_js-n-46cfdf.bundle.js"></script><script defer src="src_lib_simulator_core_js.bundle.js"></script><script defer src="src_lib_simulator_circuit_js.bundle.js"></script><script defer src="frequency_encoding.bundle.js"></script></head>
+<script defer src="vendors-node_modules_mathjs_lib_esm_entry_pureFunctionsAny_generated_js.bundle.js"></script><script defer src="vendors-node_modules_microsoft_quantum-viz_js_dist_qviz_min_js-node_modules_d3_src_index_js.bundle.js"></script><script defer src="src_lib_simulator_core_js.bundle.js"></script><script defer src="src_lib_simulator_circuit_js.bundle.js"></script><script defer src="frequency_encoding.bundle.js"></script></head>
 <body>
     <div class="sidebar">
         <!-- Logo with text next to it -->
@@ -180,11 +180,23 @@
         <h2>Options</h2>
         <div class="input-group">
             <label for="qubits">Qubits:</label>
-            <input type="number" id="qubits" value="3" min="1">
+            <select id="qubits">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
         </div>
         <div class="input-group">
             <label for="frequency">Frequency:</label>
             <input type="number" id="frequency" value="4.3" step="0.1">
+        </div>
+        <div class="input-group" id="error-display" style="display: none;">
+            <div style="background-color: #FFE5E5; color: #D32F2F; padding: 10px; border-radius: 8px; border-left: 4px solid #D32F2F; font-size: 14px;">
+                <strong>Error:</strong> <span id="error-message"></span>
+            </div>
         </div>
         <button id="apply">Apply</button>
     </div>

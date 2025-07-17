@@ -168,7 +168,7 @@
 </style>
 
 
-<script defer src="vendors-node_modules_microsoft_quantum-viz_js_dist_qviz_min_js-node_modules_d3_src_index_js-n-46cfdf.bundle.js"></script><script defer src="vendors-node_modules_nerdamer_nerdamer_core_js.bundle.js"></script><script defer src="src_lib_simulator_core_js.bundle.js"></script><script defer src="src_lib_simulator_circuit_js.bundle.js"></script><script defer src="function_encoding.bundle.js"></script></head>
+<script defer src="vendors-node_modules_mathjs_lib_esm_entry_pureFunctionsAny_generated_js.bundle.js"></script><script defer src="vendors-node_modules_microsoft_quantum-viz_js_dist_qviz_min_js-node_modules_d3_src_index_js.bundle.js"></script><script defer src="vendors-node_modules_nerdamer_nerdamer_core_js.bundle.js"></script><script defer src="src_lib_simulator_core_js.bundle.js"></script><script defer src="src_lib_simulator_circuit_js.bundle.js"></script><script defer src="function_encoding.bundle.js"></script></head>
 <body>   
     <div class="sidebar">
         <!-- Logo with text next to it -->
@@ -181,12 +181,23 @@
 
         <div class="input-group">
             <label for="input_qubits">Input qubits: </label>
-            <input type="number" id="input_qubits" value="2">
+            <select id="input_qubits">
+                <option value="1">1</option>
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
         </div>
 
         <div class="input-group">
             <label for="output_qubits">Output qubits: </label>
-            <input type="number" id="output_qubits" value="4">
+            <select id="output_qubits">
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4" selected>4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
         </div>
 
         <div class="input-group">
@@ -199,7 +210,13 @@
 
         <div class="input-group">
             <label for="poly">Polynomial: </label>
-            <input type="text" id="poly" value="x^2">
+            <input type="text" id="poly" value="x^2" placeholder="e.g., x^2, x0 + x1, 2*x^3">
+        </div>
+
+        <div class="input-group" id="error-display" style="display: none;">
+            <div style="background-color: #FFE5E5; color: #D32F2F; padding: 10px; border-radius: 10px; border-left: 4px solid #D32F2F; font-size: 14px; width: calc(100% - 20px); box-sizing: border-box; margin-bottom: 10px;">
+                <strong>Error:</strong> <span id="error-message"></span>
+            </div>
         </div>
 
         <div class="input-group">

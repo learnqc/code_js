@@ -2,10 +2,10 @@ import {QuantumCircuit, QuantumRegister} from "../simulator/circuit.js";
 
 const no_arg_gates = ['h', 'x', 'y', 'z'];
 const arg_gates = ['p', 'rx', 'ry', 'rz'];
-const control_gates = ['cx', 'cy', 'cz'];
-const control_arg_gates = ['cp', 'cry'];
-const multi_control_gates = ['mcx', 'mcp'];
-const gates = no_arg_gates.concat(arg_gates, control_gates, control_arg_gates, multi_control_gates);
+const control_gates = ['cx', 'cy', 'cz', 'cp', 'cry'];
+const multiple_control_gates = ['mcx', 'mcp'];
+const gates = no_arg_gates.concat(arg_gates, control_gates, multiple_control_gates);
+const degree_gates = ['p', 'rx', 'ry', 'rz', 'cp', 'cry', 'mcp'];
 
 function add_gate(qc, cs, target, gate, angle = null) {
     console.log(cs);
@@ -27,13 +27,7 @@ function add_gate(qc, cs, target, gate, angle = null) {
         }
         qc[gate](parseInt(cs[0]), parseInt(target));
     }
-    else if (control_arg_gates.includes(gate) && angle !== null) {
-        if (cs.length !== 1) {
-            throw new Error(`Gate ${gate} requires exactly 1 control qubit.`);
-        }
-        qc[gate](angle, parseInt(cs[0]), parseInt(target));
-    }
-    else if (multi_control_gates.includes(gate)) {
+    else if (multiple_control_gates.includes(gate) && angle !== null) {
         if (cs.length < 2) {
             throw new Error(`Gate ${gate} requires at least 2 control qubits.`);
         }
@@ -96,7 +90,7 @@ function get_state(qc) {
     return state;
 }
 
-export { add_gate, create_circuit, apply_gate, last_step, get_state, gates, arg_gates, no_arg_gates, control_arg_gates, control_gates, multi_control_gates };
+export { add_gate, create_circuit, apply_gate, last_step, get_state, gates, arg_gates, no_arg_gates, control_gates, multiple_control_gates, degree_gates };
 
 
 
