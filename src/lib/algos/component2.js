@@ -238,7 +238,7 @@ export class QuantumStateViewer extends LitElement {
     this.processedPairs = [];
     this.gate = 'X';
     this.targetQubit = 0;
-    this.controlQubit = 0;
+    this.controlQubit = 1; // Changed from 0 to 1 to avoid conflict with targetQubit
     this.controlled = false;
     this.processingPair = [];
     this.dynamicSteps = [];
@@ -318,7 +318,7 @@ export class QuantumStateViewer extends LitElement {
 
   applyDynamicGate() {
     this.controlled = ['CX', 'CY', 'CZ'].includes(this.gate);
-    const n = 3;
+    const n = this.num_qubits; // Use this.num_qubits instead of hardcoded 3
     const generator = pair_generator(n, this.targetQubit);
 
     this.gateMatrix =
@@ -466,7 +466,13 @@ export class QuantumStateViewer extends LitElement {
         <div class="buttons" style="margin-bottom: 0;">
           <div class="control-item">
             <label for="gate-select">Gate:</label>
-            <select id="gate-select" @change="${(e) => { this.gate = e.target.value; this.dynamicSteps = []; this.stepIndex = 0; this.processingStarted = false; }}" ?disabled="${controlsLocked}">
+            <select id="gate-select" @change="${(e) => { 
+              this.gate = e.target.value; 
+              this.controlled = ['CX', 'CY', 'CZ'].includes(this.gate);
+              this.dynamicSteps = [];
+              this.stepIndex = 0;
+              this.processingStarted = false; 
+            }}" ?disabled="${controlsLocked}">
               <option value="X" ?selected="${this.gate === 'X'}">X</option>
               <option value="Y" ?selected="${this.gate === 'Y'}">Y</option>
               <option value="Z" ?selected="${this.gate === 'Z'}">Z</option>
@@ -491,7 +497,6 @@ export class QuantumStateViewer extends LitElement {
                 ?disabled="${controlsLocked}"
               >
                 ${qubitOptions
-                  .filter(q => q !== this.controlQubit || !this.controlled)
                   .map(q => html`<option .value="${q}">${q}</option>`)}
               </select>
             </div>
@@ -507,7 +512,6 @@ export class QuantumStateViewer extends LitElement {
                 ?disabled="${controlsLocked}"
               >
                 ${qubitOptions
-                  .filter(q => q !== this.targetQubit)
                   .map(q => html`<option .value="${q}">${q}</option>`)}
               </select>
             </div>
@@ -561,22 +565,12 @@ export class QuantumStateViewer extends LitElement {
   handleTargetQubitChange(e) {
     const newTarget = parseInt(e.target.value, 10);
     this.targetQubit = newTarget;
-    if (this.controlQubit === newTarget) {
-      // Find the first available qubit that is not the new target
-      const availableQubits = Array.from({ length: this.num_qubits }, (_, i) => i);
-      this.controlQubit = availableQubits.find(q => q !== newTarget);
-    }
     this.requestUpdate();
   }
 
   handleControlQubitChange(e) {
     const newControl = parseInt(e.target.value, 10);
     this.controlQubit = newControl;
-    if (this.targetQubit === newControl) {
-      // Find the first available qubit that is not the new control
-      const availableQubits = Array.from({ length: this.num_qubits }, (_, i) => i);
-      this.targetQubit = availableQubits.find(q => q !== newControl);
-    }
     this.requestUpdate();
   }
 }
