@@ -50,6 +50,14 @@
             flex-direction: column;
             align-items: center;
         }
+        .centered-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #112D4E;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
         quantum-state-viewer {
             transform: scale(1.2);
             transform-origin: top center;
@@ -65,6 +73,7 @@
         </div>
     </div>
     <div class="main-content">
+        <h1 class="centered-title">Quantum Transformation Simulator</h1>
         <quantum-state-viewer></quantum-state-viewer>
     </div>
     <script type="module" src="dist/quantum_transformations.bundle.js"></script>

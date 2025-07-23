@@ -466,7 +466,7 @@ export class QuantumStateViewer extends LitElement {
 
     return html`
       <div>
-        <h3>Quantum Transformation Simulator</h3>
+        <!-- Removed duplicate <h3>Quantum Transformation Simulator</h3> -->
 
         <!-- Controls at the top: first row -->
         <div class="buttons" style="margin-bottom: 0;">
